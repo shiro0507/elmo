@@ -1,0 +1,65 @@
+# Elmo worker (pg-boss background jobs), split out from docker/Dockerfile because
+# Railway's Dockerfile builder does not support selecting a --target stage
+# from a multi-stage file (https://station.railway.com/feedback/support-dockerfile-targets-c9df6441).
+
+FROM node:24-alpine AS base
+RUN corepack enable pnpm
+RUN apk add --no-cache curl
+
+# Dependencies stage
+FROM base AS deps
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/web/package.json ./apps/web/
+COPY apps/worker/package.json ./apps/worker/
+COPY packages/ui/package.json ./packages/ui/
+COPY packages/config/package.json ./packages/config/
+COPY packages/lib/package.json ./packages/lib/
+COPY packages/local/package.json ./packages/local/
+COPY packages/whitelabel/package.json ./packages/whitelabel/
+COPY packages/cloud/package.json ./packages/cloud/
+COPY packages/deployment/package.json ./packages/deployment/
+COPY packages/og/package.json ./packages/og/
+COPY packages/api-spec/package.json ./packages/api-spec/
+
+RUN pnpm install --frozen-lockfile
+
+# Builder stage
+FROM base AS builder
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/worker/node_modules ./apps/worker/node_modules
+COPY --from=deps /app/packages/ui/node_modules ./packages/ui/node_modules
+COPY --from=deps /app/packages/config/node_modules ./packages/config/node_modules
+COPY --from=deps /app/packages/lib/node_modules ./packages/lib/node_modules
+COPY --from=deps /app/packages/local/node_modules ./packages/local/node_modules
+COPY --from=deps /app/packages/whitelabel/node_modules ./packages/whitelabel/node_modules
+COPY --from=deps /app/packages/cloud/node_modules ./packages/cloud/node_modules
+COPY --from=deps /app/packages/deployment/node_modules ./packages/deployment/node_modules
+COPY --from=deps /app/packages/og/node_modules ./packages/og/node_modules
+
+COPY . .
+
+# --legacy: allows deploy without inject-workspace-packages (which breaks Alpine Docker builds)
+RUN pnpm --filter @workspace/worker deploy --legacy /deploy/worker
+
+# Worker stage
+FROM base AS worker
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 worker
+
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+COPY --from=builder --chown=worker:nodejs /deploy/worker ./
+
+USER worker
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["npx", "tsx", "src/index.ts"]
