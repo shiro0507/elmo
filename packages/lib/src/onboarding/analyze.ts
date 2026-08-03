@@ -221,19 +221,23 @@ function buildPrompt(args: {
 	includeCompetitors: boolean;
 	includePrompts: boolean;
 }): string {
-	const excerptBlock = args.websiteExcerpt ? `\nText from ${args.website}:\n---\n${args.websiteExcerpt}\n---\n` : "\n";
+	const excerptBlock = args.websiteExcerpt
+		? `\n${args.website} から抽出したテキスト:\n---\n${args.websiteExcerpt}\n---\n`
+		: "\n";
 
 	const skipNotes: string[] = [];
-	if (!args.includeCompetitors) skipNotes.push("Return an empty array for competitors.");
-	if (!args.includePrompts) skipNotes.push("Return an empty array for suggestedPrompts.");
+	if (!args.includeCompetitors) skipNotes.push("競合については空の配列を返してください。");
+	if (!args.includePrompts) skipNotes.push("提案プロンプトについては空の配列を返してください。");
 
-	return `Analyze the brand at ${args.website}.
+	return `${args.website} のブランドを分析してください。
 
-Likely brand name (from domain): ${args.brandNameHint}
+ドメインから推測されるブランド名: ${args.brandNameHint}
 ${excerptBlock}
-Use web search to verify facts. Never invent information — return empty arrays when uncertain.
+事実確認のためWeb検索を使用してください。情報を捏造しないでください — 不確かな場合は空の配列を返してください。
 
-You MUST return the structured JSON object — even if you can find nothing about this brand. In that case set brandName to the likely name above and return empty arrays for every other field. Refusing to produce JSON, or replying with prose explaining what you don't know, is a failure mode; an object with mostly-empty arrays is the correct answer when information is genuinely unavailable.${skipNotes.length > 0 ? `\n\n${skipNotes.join(" ")}` : ""}`;
+構造化されたJSONオブジェクトを必ず返してください — このブランドについて何も見つけられなかった場合も同様です。その場合はbrandNameに上記の推測名を設定し、それ以外の全フィールドには空の配列を返してください。JSONの生成を拒否したり、分からないことを説明する文章で応答したりするのは誤った挙動です。情報が本当に手に入らない場合、ほとんどが空の配列であるオブジェクトを返すことが正しい対応です。
+
+出力するテキスト(ブランド名、エイリアス、競合名、提案するトラッキング用プロンプトなど)はすべて日本語で記述してください。ただしドメイン名やURLなど、本来英数字で表記されるべき固有の文字列はそのままにしてください。${skipNotes.length > 0 ? `\n\n${skipNotes.join(" ")}` : ""}`;
 }
 
 function normalize(args: {
