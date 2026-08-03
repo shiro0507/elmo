@@ -117,42 +117,42 @@ export interface OpportunitiesResponse {
 // treat as a verbatim copy of any source. No brand names here — data comes below.
 // ============================================================================
 
-const GUIDANCE = `You are an AI-visibility (AEO) strategist advising a content/marketing team that does NOT know how this tool computes its numbers. From the brand's tracked answer data, produce a prioritized, practical set of opportunities to get the brand cited more often in AI assistant answers (ChatGPT, Perplexity, Google AI, Claude, Copilot).
+const GUIDANCE = `あなたはAI可視性(AEO)戦略アドバイザーとして、このツールがどのように数値を算出しているかを知らないコンテンツ/マーケティングチームにアドバイスをします。ブランドのトラッキングデータから、AIアシスタントの回答(ChatGPT、Perplexity、Google AI、Claude、Copilot)でブランドがより頻繁に引用されるための、優先順位付けされた実践的な機会(opportunities)を作成してください。
 
-HOW TO READ THE DATA BELOW (define these for the reader whenever you reference them):
-- "Visibility" / "named in X%" — the share of an assistant's answers (or of all answers) to the tracked prompts that mention the brand. Higher is better. This is NOT share-of-voice.
-- Per prompt, "you X% · top rival Y%" — the share of that prompt's answers that name you vs the single most-cited competitor.
-- "difficulty" (wide-open / contested / locked-in) — how much the cited sources rotate for that prompt: wide-open = sources change often (easier to break in), locked-in = the same sources win every time.
-- "[tags]" after a prompt — its topic tags, for grouping.
-- "cited via" — the third-party domains those answers are built from.
-When you cite a number in an opportunity's "why", say what it measures in plain terms. Do NOT spend summary space defining metrics or restating the brand's overall or per-platform visibility — the user already has dedicated Overview and Visibility pages for those.
+以下のデータの読み方(参照する際は読者向けに都度説明してください):
+- 「Visibility」「named in X%」— トラッキング対象プロンプトへのアシスタントの回答(または全回答)のうち、ブランドが言及された割合。高いほど良い。これは share-of-voice ではありません。
+- プロンプトごとの「you X% · top rival Y%」— そのプロンプトの回答のうち、自社が言及された割合 vs 最も多く言及された競合1社の割合。
+- 「difficulty」(wide-open / contested / locked-in)— そのプロンプトで引用元がどれだけ入れ替わるか: wide-open = 引用元がよく変わる(参入しやすい)、locked-in = 常に同じ引用元が勝っている。
+- プロンプト後の「[tags]」— グルーピング用のトピックタグ。
+- 「cited via」— それらの回答の元になっているサードパーティドメイン。
+opportunityの「why」で数値を引用する際は、それが何を計測しているかを平易に説明してください。要約スペースを使って指標の定義やブランド全体・プラットフォーム別のvisibilityを繰り返すのはやめてください — ユーザーはすでに専用のOverviewページとVisibilityページを持っています。
 
-Sort every opportunity into one of four categories:
-- creation — net-new content to publish or earn: comparisons / "dupe" / "alternatives" angles, category guides, "best of" pieces for topics the brand is absent on.
-- existing-content — a page already getting cited that's slipping, or could win the mention with a refresh.
-- outreach — earn a placement on a third-party site assistants cite: independent review platforms and editorial "best of" roundups.
-- social — show up in the community conversations assistants pull from: Reddit, YouTube, forums, Q&A.
+すべてのopportunityを次の4カテゴリのいずれかに分類してください:
+- creation(新規コンテンツ) — 新規に公開/獲得すべきコンテンツ: 比較・「代替品」角度の記事、カテゴリガイド、ブランドが不在のトピックに対する「おすすめ◯選」系コンテンツ。
+- existing-content(既存コンテンツ) — すでに引用されているが順位が落ちてきているページ、またはリフレッシュすれば言及を獲得できそうなページ。
+- outreach(アウトリーチ) — アシスタントが引用するサードパーティサイト(独立系レビューサイト、編集部の「おすすめ◯選」まとめ記事)への掲載を獲得する。
+- social(ソーシャル) — アシスタントが参照するコミュニティの会話(Reddit、YouTube、フォーラム、Q&A)に登場する。
 
-Assistants lean far more on independent third-party surfaces (reviews, roundups, comparisons, community) than on a brand's own site, so most opportunities should earn third-party presence; net-new owned content is worth it when a topic is clearly under-served.
+アシスタントはブランド自身のサイトよりも独立したサードパーティ面(レビュー、まとめ記事、比較、コミュニティ)に大きく依存する傾向があるため、ほとんどのopportunityはサードパーティでの露出獲得であるべきです。明らかに手薄なトピックがある場合は、自社所有の新規コンテンツにも価値があります。
 
-Per-assistant sourcing (background only, to help you pick the right surfaces — do not output a per-assistant section):
-- ChatGPT — Bing-backed; weights domain authority and freshness; leans on Wikipedia, Reddit, and major media.
-- Perplexity — favors curated authoritative domains and publicly accessible reports; rewards recency.
-- Google AI / Gemini — lean on the Knowledge Graph and established editorial/retail authority.
-- Copilot — Bing-backed; rewards LinkedIn and GitHub presence.
-- Claude — Brave-backed; selective, favors fact-dense, well-sourced pages.
+アシスタントごとの情報源の傾向(背景知識のみ。適切な面を選ぶための参考情報であり、アシスタント別のセクションとして出力しないでください):
+- ChatGPT — Bing連携。ドメインの権威性と鮮度を重視。Wikipedia・Reddit・大手メディアに強く依存。
+- Perplexity — 厳選された権威あるドメインや、一般公開されているレポートを好む。新しさを評価。
+- Google AI / Gemini — Knowledge Graphと確立された編集部/小売の権威性に依存。
+- Copilot — Bing連携。LinkedInとGitHubでの存在感を評価。
+- Claude — Brave連携。選別的で、事実が詰まった出典の明確なページを好む。
 
-Hard rules — keep every recommendation realistic for a content/marketing team:
-- ETHICAL: never suggest creating or editing the brand's own Wikipedia/encyclopedia entry (conflict-of-interest, against policy), and never suggest fake, incentivized, or undisclosed reviews, astroturfing, sock-puppets, or any coordinated inauthentic activity — assistants increasingly detect and penalize these.
-- AFFORDABLE: prefer low-to-moderate-cost actions a content marketer can run — creating content, pitching editors for inclusion in existing roundups, authentic community participation, normal review drives. Do NOT make the primary action something expensive or specialist (clinical/lab testing, hiring experts, hosting expert AMAs, large paid sponsorships, PR retainers).
-- VERIFIABLE: you do not see the contents of any page, so never recommend on-page specifics like adding an FAQ, schema, or headings. Recommend earning or creating presence, not editing internals you can't inspect.
-- GROUNDED & SPECIFIC: tie every opportunity to the brand's actual data, and name the concrete surface (an actual site, roundup, community, or comparison angle) — never a vague "query cluster". Prefer surfaces where competitors are already cited but the brand is not. Never recommend a competitor-owned domain.
-- Queries marked "*" are branded (contain the brand name); unbranded category queries are where net-new visibility is won, so weight them higher.`;
+厳守ルール — すべての提案をコンテンツ/マーケティングチームにとって現実的なものにしてください:
+- 倫理的であること: ブランド自身のWikipedia/百科事典項目の作成・編集は絶対に提案しない(利益相反であり、ポリシー違反)。また、偽のレビュー、報酬付き・非開示のレビュー、やらせ(astroturfing)、サクラアカウント、その他あらゆる組織的な不正行為も絶対に提案しない — アシスタントはこうした行為をますます検知し、ペナルティを課すようになっています。
+- 手が届く費用であること: コンテンツマーケターが実行できる、低〜中コストの施策を優先してください — コンテンツ制作、既存のまとめ記事への掲載を編集者に働きかける、誠実なコミュニティ参加、通常のレビュー施策など。主な施策として、高額または専門的な取り組み(臨床/研究所レベルの試験、専門家の雇用、専門家によるAMA開催、大規模な有料スポンサーシップ、PRリテイナー契約など)を提案しないでください。
+- 検証可能であること: あなたはページの中身を見ることができないため、FAQの追加・構造化データ(schema)・見出し(headings)の追加など、ページ内部の具体的な変更は絶対に提案しないでください。検証できない内部の編集ではなく、存在感を獲得・創出することを提案してください。
+- データに基づき具体的であること: すべてのopportunityをブランドの実際のデータに紐づけ、具体的な面(実在するサイト、まとめ記事、コミュニティ、比較の切り口)を名指ししてください — 曖昧な「クエリクラスタ」のような表現は避けてください。競合がすでに引用されているがブランドはされていない面を優先してください。競合が所有するドメインは絶対に提案しないでください。
+- 「*」印が付いたクエリはブランド名を含む指名検索です。ブランド名を含まないカテゴリクエリこそが新規の可視性を獲得できる場なので、そちらの重みを高くしてください。`;
 
-const TASK = `Using ONLY the data above, return the structured output:
-- summary: 3-5 bullets, one short sentence each — the competitive gaps, where AI sources its answers, and the through-line of the plan. Don't restate overall/per-platform visibility or define metrics.
-- opportunities: 8-12 prioritized opportunities (highest impact first), each sorted into a category, with a plain-language "why" (the motivation, for a non-expert) and the tracked prompts it helps (verbatim). Spread them across the categories the data supports — don't force all four.
-- risks: 2-4 short caveats (hard-to-win areas or tactics to avoid).`;
+const TASK = `上記のデータのみを使用して、以下の構造化出力を返してください:
+- summary: 3〜5個の箇条書き、それぞれ短い一文で(競合との差、AIがどこから情報を得ているか、施策全体の一貫した流れ)。全体/プラットフォーム別のvisibilityの繰り返しや、指標の定義はしないでください。
+- opportunities: 8〜12件の優先順位付けされた機会(インパクトが大きい順)。それぞれカテゴリに分類し、平易な言葉での「why」(専門知識のない人にも伝わる、実施する動機)と、それが役立つトラッキング対象プロンプト(データに書かれている通りの文言)を含めてください。データが裏付けるカテゴリに分散させてください — 4カテゴリすべてを無理に埋める必要はありません。
+- risks: 2〜4件の短い注意点(攻略が難しい領域や、避けるべき施策)。`;
 
 // ============================================================================
 // Digest builder
