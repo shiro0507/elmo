@@ -84,13 +84,12 @@ export function RedditCard({ subreddits }: { subreddits: ReturnType<typeof useSu
 							<IconInfoCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
 						</TooltipTrigger>
 						<TooltipContent className="max-w-xs text-sm font-normal">
-							Reddit communities most frequently cited by AI models. Extracted from all reddit.com URLs in your citation
-							data.
+							AIモデルによって最も頻繁に引用されているRedditコミュニティです。引用データ内のreddit.comのURLすべてから抽出しています。
 						</TooltipContent>
 					</Tooltip>
 				</CardTitle>
 				<CardDescription>
-					Top cited subreddits — which Reddit communities AI models reference when answering your prompts
+					引用の多いsubreddit — AIモデルがプロンプトへの回答時に参照しているRedditコミュニティ
 				</CardDescription>
 			</CardHeader>
 			<Separator />
@@ -114,13 +113,15 @@ export function RedditCard({ subreddits }: { subreddits: ReturnType<typeof useSu
 										</span>
 										{sub.allNew && (
 											<Badge className="text-[10px] px-1.5 py-0 h-[18px] border-0 shadow-none bg-green-100 text-green-700">
-												NEW
+												新規
 											</Badge>
 										)}
 										{!sub.allNew && sub.newPages > 0 && (
-											<span className="text-[10px] text-green-600 whitespace-nowrap">+{sub.newPages} new</span>
+											<span className="text-[10px] text-green-600 whitespace-nowrap">+{sub.newPages} 新規</span>
 										)}
-										{sub.hasDropped && <span className="text-[10px] text-red-500 whitespace-nowrap">some dropped</span>}
+										{sub.hasDropped && (
+											<span className="text-[10px] text-red-500 whitespace-nowrap">一部が対象外に</span>
+										)}
 									</button>
 									<div className="flex items-center gap-2 shrink-0 ml-3">
 										<span className="text-sm font-semibold tabular-nums">{sub.count.toLocaleString()}</span>
@@ -149,7 +150,7 @@ export function RedditCard({ subreddits }: { subreddits: ReturnType<typeof useSu
 													{u.title || formatUrlForDisplay(u.url)}
 													{u.isNew && (
 														<Badge className="text-[9px] px-1 py-0 h-[14px] border-0 shadow-none bg-green-100 text-green-700 shrink-0">
-															NEW
+															新規
 														</Badge>
 													)}
 												</span>

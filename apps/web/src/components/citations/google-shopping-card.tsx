@@ -74,18 +74,17 @@ export function GoogleShoppingCard({ googleModule, brandId }: { googleModule: Go
 							<IconInfoCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
 						</TooltipTrigger>
 						<TooltipContent className="max-w-xs text-sm font-normal">
-							Product cards Google AI Mode showed when answering your prompts. The number next to each is how many times
-							that card appeared across results (card inclusions, not unique products). Kept separate from the citation
-							mix above.
+							あなたのプロンプトへの回答時にGoogle AI
+							Modeが表示した商品カードです。各項目の数字は、そのカードが検索結果全体で表示された回数です(ユニーク商品数ではなくカード表示回数)。上記の引用構成とは別に集計しています。
 						</TooltipContent>
 					</Tooltip>
 				</CardTitle>
 				<CardDescription>
-					Products Google AI Mode surfaced —{" "}
+					Google AI Modeが表示した商品 —{" "}
 					<span className="font-medium text-emerald-600">{googleModule.shopping.brandCount.toLocaleString()}</span>{" "}
-					appearances for yours vs{" "}
-					<span className="font-medium text-red-600">{googleModule.shopping.competitorCount.toLocaleString()}</span> for
-					competitors
+					回(自社)に対して{" "}
+					<span className="font-medium text-red-600">{googleModule.shopping.competitorCount.toLocaleString()}</span>
+					回(競合)
 				</CardDescription>
 			</CardHeader>
 			<Separator />
@@ -93,13 +92,13 @@ export function GoogleShoppingCard({ googleModule, brandId }: { googleModule: Go
 				{googleModule.shopping.products.length > 0 && (
 					<div>
 						<div className="flex items-center justify-between mb-2 gap-2">
-							<h4 className="text-sm font-medium shrink-0">Products</h4>
+							<h4 className="text-sm font-medium shrink-0">商品</h4>
 							<div className="flex items-center gap-1">
 								{(
 									[
-										["all", "All"],
-										["brand", "Yours"],
-										["competitor", "Competitors"],
+										["all", "すべて"],
+										["brand", "自社"],
+										["competitor", "競合"],
 									] as const
 								).map(([key, label]) => (
 									<button
@@ -157,7 +156,7 @@ export function GoogleShoppingCard({ googleModule, brandId }: { googleModule: Go
 
 				{googleModule.search.queries.length > 0 && (
 					<div>
-						<h4 className="text-sm font-medium mb-2">Search queries</h4>
+						<h4 className="text-sm font-medium mb-2">検索クエリ</h4>
 						<div className="divide-y divide-border/50">
 							{(showAllQueries ? googleModule.search.queries : googleModule.search.queries.slice(0, 5)).map((q) => {
 								const isExpanded = expandedQuery === q.query;
@@ -190,7 +189,7 @@ export function GoogleShoppingCard({ googleModule, brandId }: { googleModule: Go
 								onClick={() => setShowAllQueries(true)}
 								className="mt-3 text-xs text-muted-foreground hover:text-foreground cursor-pointer px-3 py-1.5 rounded-md border border-border hover:bg-muted/60 transition-colors"
 							>
-								Show {googleModule.search.queries.length - 5} more
+								他{googleModule.search.queries.length - 5}件を表示
 							</button>
 						)}
 					</div>

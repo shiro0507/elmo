@@ -65,36 +65,35 @@ export function TopUrlsCard({
 				<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
 					<div className="space-y-1 min-w-0">
 						<CardTitle className="flex items-center gap-1.5">
-							Top Cited URLs
+							引用の多いURL
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<IconInfoCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
 								</TooltipTrigger>
 								<TooltipContent className="max-w-xs text-sm font-normal">
 									<p className="mb-2">
-										The specific pages most frequently cited by AI models. Filter by category to focus on brand,
-										competitor, or other sources.
+										AIモデルによって最も頻繁に引用されている個別ページです。カテゴリでフィルターして、ブランド・競合・その他の情報源に絞り込めます。
 									</p>
 									<p>
-										<strong>Competitor</strong> domains are only those in your{" "}
+										<strong>競合</strong>ドメインとは、
 										{brandId ? (
 											<Link to="/app/$brand/settings/competitors" params={{ brand: brandId }} className="underline">
-												tracked competitors list
+												追跡中の競合リスト
 											</Link>
 										) : (
-											"tracked competitors list"
+											"追跡中の競合リスト"
 										)}
-										.
+										に含まれるものだけを指します。
 									</p>
 								</TooltipContent>
 							</Tooltip>
 						</CardTitle>
 						<CardDescription>
-							Individual pages cited by LLMs
+							LLMが引用した個別ページ
 							{brandIsCited && brandName && (
 								<>
 									{" "}
-									&mdash; {brandName} accounts for <strong>{brandShare}%</strong> of all citations
+									&mdash; {brandName}は全引用のうち<strong>{brandShare}%</strong>を占めています
 								</>
 							)}
 						</CardDescription>
@@ -102,7 +101,7 @@ export function TopUrlsCard({
 					<div className="relative w-full sm:w-48 shrink-0">
 						<IconSearch className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
 						<Input
-							placeholder="Search URLs..."
+							placeholder="URLを検索..."
 							value={urlSearch}
 							onChange={(e) => {
 								setUrlSearch(e.target.value);
@@ -166,7 +165,7 @@ export function TopUrlsCard({
 										</Badge>
 										{citation.isNew && (
 											<Badge className="text-[10px] px-1.5 py-0 h-[18px] border-0 shadow-none bg-green-100 text-green-700">
-												NEW
+												新規
 											</Badge>
 										)}
 										<span className="text-sm font-medium truncate group-hover:underline">
@@ -183,11 +182,11 @@ export function TopUrlsCard({
 										<Tooltip>
 											<TooltipTrigger asChild>
 												<span className="text-[11px] text-muted-foreground tabular-nums">
-													avg {citation.avgPosition.toFixed(1)}
+													平均 {citation.avgPosition.toFixed(1)}
 												</span>
 											</TooltipTrigger>
 											<TooltipContent className="text-xs">
-												Average citation position (lower = cited earlier in the response)
+												平均引用位置(数値が低いほど回答の早い段階で引用されている)
 											</TooltipContent>
 										</Tooltip>
 									)}
@@ -198,7 +197,7 @@ export function TopUrlsCard({
 											</span>
 										</TooltipTrigger>
 										<TooltipContent className="text-xs">
-											Total times this URL was cited across all prompt evaluations
+											全プロンプト評価にわたって、このURLが引用された合計回数
 										</TooltipContent>
 									</Tooltip>
 									<IconExternalLink className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -207,7 +206,7 @@ export function TopUrlsCard({
 						);
 					})}
 					{filteredUrls.length === 0 && (
-						<p className="text-sm text-muted-foreground text-center pt-8 pb-4">No URLs match the current filters.</p>
+						<p className="text-sm text-muted-foreground text-center pt-8 pb-4">現在のフィルターに該当するURLがありません。</p>
 					)}
 				</div>
 				<ListPagination page={page} pageSize={maxUrls} totalItems={totalItems} onPageChange={setPage} />

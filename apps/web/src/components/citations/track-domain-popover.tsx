@@ -37,7 +37,7 @@ export function TrackDomainPopover({
 
 	const handleError = (e: unknown) => {
 		setSaving(false);
-		setError("Something went wrong. Please try again.");
+		setError("エラーが発生しました。もう一度お試しください。");
 		Sentry.captureException(e);
 	};
 
@@ -90,7 +90,7 @@ export function TrackDomainPopover({
 				<button
 					type="button"
 					className="shrink-0 p-1 rounded hover:bg-muted cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
-					title={`Track ${domain}`}
+					title={`${domain} を追跡`}
 				>
 					<IconPlus className="h-3.5 w-3.5" />
 				</button>
@@ -98,21 +98,21 @@ export function TrackDomainPopover({
 			<PopoverContent className="w-72 p-3" align="end">
 				<div className="space-y-3">
 					<p className="text-xs font-medium">
-						Track <strong>{domain}</strong>
+						<strong>{domain}</strong> を追跡
 					</p>
 
 					{error && <p className="text-xs text-destructive bg-destructive/10 rounded px-2 py-1.5">{error}</p>}
 
 					<div className="space-y-1">
 						<div className="flex items-center gap-1">
-							<p className="text-[11px] text-muted-foreground">Add as brand domain</p>
+							<p className="text-[11px] text-muted-foreground">ブランドドメインとして追加</p>
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<IconInfoCircle className="h-3 w-3 text-muted-foreground cursor-help" />
 								</TooltipTrigger>
 								<TooltipContent className="max-w-xs text-xs font-normal">
-									Applies <strong>retroactively</strong> &mdash; all existing and future citations from this domain will
-									be classified as your brand.
+									<strong>遡って適用</strong>されます &mdash;
+									このドメインからの既存および今後の引用は、すべてあなたのブランドとして分類されます。
 								</TooltipContent>
 							</Tooltip>
 						</div>
@@ -122,21 +122,21 @@ export function TrackDomainPopover({
 							disabled={saving}
 							className="w-full text-left text-xs px-2 py-1.5 rounded hover:bg-muted cursor-pointer disabled:opacity-50 transition-colors"
 						>
-							{brandName || "My brand"}
+							{brandName || "自社ブランド"}
 						</button>
 					</div>
 
 					{competitors.length > 0 && (
 						<div className="space-y-1">
 							<div className="flex items-center gap-1">
-								<p className="text-[11px] text-muted-foreground">Add to existing competitor</p>
+								<p className="text-[11px] text-muted-foreground">既存の競合に追加</p>
 								<Tooltip>
 									<TooltipTrigger asChild>
 										<IconInfoCircle className="h-3 w-3 text-muted-foreground cursor-help" />
 									</TooltipTrigger>
 									<TooltipContent className="max-w-xs text-xs font-normal">
-										Applies <strong>retroactively</strong> &mdash; all existing and future citations from this domain
-										will be classified under the selected competitor.
+										<strong>遡って適用</strong>されます &mdash;
+										このドメインからの既存および今後の引用は、すべて選択した競合として分類されます。
 									</TooltipContent>
 								</Tooltip>
 							</div>
@@ -157,12 +157,12 @@ export function TrackDomainPopover({
 					)}
 
 					<div className="space-y-1.5">
-						<p className="text-[11px] text-muted-foreground">Or create new competitor:</p>
+						<p className="text-[11px] text-muted-foreground">または新しい競合を作成:</p>
 						<div className="flex gap-1.5">
 							<Input
 								value={newName}
 								onChange={(e) => setNewName(e.target.value)}
-								placeholder="Competitor name"
+								placeholder="競合の名前"
 								className="h-7 text-xs"
 								onKeyDown={(e) => {
 									if (e.key === "Enter") {
@@ -178,7 +178,7 @@ export function TrackDomainPopover({
 								disabled={saving || !newName.trim()}
 								className="h-7 px-2 text-xs cursor-pointer shrink-0"
 							>
-								Add
+								追加
 							</Button>
 						</div>
 					</div>

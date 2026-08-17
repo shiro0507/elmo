@@ -35,13 +35,13 @@ export function CitationStatsCards({
 	return (
 		<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 			<StatCard
-				title="Brand Citation Share"
-				tooltip="The percentage of all citations that link to your brand's domain. A higher share means AI models are more likely to reference your content."
+				title="ブランド引用シェア"
+				tooltip="全引用のうち、あなたのブランドのドメインへリンクしている割合です。高いほど、AIモデルがあなたのコンテンツを参照しやすいことを意味します。"
 				value={`${brandShare}%`}
 			/>
 			<StatCard
-				title="Unique Domains"
-				tooltip="The number of distinct domains cited across all prompt evaluations in this period."
+				title="ユニークドメイン数"
+				tooltip="この期間の全プロンプト評価にわたって引用された、重複を除いたドメインの数です。"
 				value={uniqueDomains.toLocaleString()}
 			/>
 			{/* Kept deliberately simple: the user doesn't need the Google AI Mode
@@ -50,8 +50,8 @@ export function CitationStatsCards({
 			    results, not an external domain w.r.t. the model), so they're
 			    excluded from this count and broken out in the Google Shopping card. */}
 			<StatCard
-				title="Total Citations"
-				tooltip="The total external websites cited by AI models across prompt evaluations."
+				title="総引用数"
+				tooltip="全プロンプト評価にわたって、AIモデルが引用した外部ウェブサイトの総数です。"
 				value={totalCitations.toLocaleString()}
 			/>
 		</div>

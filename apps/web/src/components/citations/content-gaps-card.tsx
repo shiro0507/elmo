@@ -20,18 +20,17 @@ export function ContentGapsCard({
 		<Card className="h-full flex flex-col">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-1.5">
-					Content Gaps
+					コンテンツギャップ
 					<Tooltip>
 						<TooltipTrigger asChild>
 							<IconInfoCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
 						</TooltipTrigger>
 						<TooltipContent className="max-w-xs text-sm font-normal">
-							Prompts where competitors are cited but your brand isn&apos;t — opportunities to improve your citation
-							presence.
+							競合は引用されているのにあなたのブランドは引用されていないプロンプト — 引用機会を改善できる余地です。
 						</TooltipContent>
 					</Tooltip>
 				</CardTitle>
-				<CardDescription>Prompts where competitors are cited but your brand isn&apos;t</CardDescription>
+				<CardDescription>競合は引用されているのにあなたのブランドは引用されていないプロンプト</CardDescription>
 			</CardHeader>
 			<Separator />
 			<CardContent className="flex-1 flex flex-col">
@@ -53,9 +52,8 @@ export function ContentGapsCard({
 									</span>
 								</div>
 								<p className="text-xs text-muted-foreground mt-0.5">
-									{prompt.uniqueCompetitors} {prompt.uniqueCompetitors === 1 ? "competitor" : "competitors"} cited{" "}
-									{prompt.competitorCitationCount} {prompt.competitorCitationCount === 1 ? "time" : "times"} &mdash;
-									your brand cited 0 times
+									競合{prompt.uniqueCompetitors}社が計{prompt.competitorCitationCount}回引用 &mdash;
+									あなたのブランドは0回
 								</p>
 							</div>
 						</Link>

@@ -24,8 +24,8 @@ export const Route = createFileRoute("/_authed/app/$brand/citations")({
 		const brandName = getBrandName(matches);
 		return {
 			meta: [
-				{ title: buildTitle("Citations", { appName, brandName }) },
-				{ name: "description", content: "See which sources LLMs cite in responses to your prompts." },
+				{ title: buildTitle("引用", { appName, brandName }) },
+				{ name: "description", content: "AIモデルがプロンプトへの回答で引用しているソースを確認できます。" },
 			],
 		};
 	},
@@ -58,15 +58,14 @@ function CitationsPage() {
 	const infoContent = (
 		<>
 			<p className="mb-2">
-				Citations are the links and sources that AI models include in their responses when answering your prompts. They
-				show which websites the AI considers authoritative or relevant to your topics.
+				引用とは、AIモデルがプロンプトに回答する際に、その回答に含めるリンクや情報源のことです。AIがどのウェブサイトを、あなたのトピックにおいて信頼できる、または関連性が高いと判断しているかを示します。
 			</p>
 			<p>
-				<strong>Competitor</strong> domains are only those you&apos;ve added to your{" "}
+				<strong>競合</strong>ドメインとは、
 				<Link to="/app/$brand/settings/competitors" params={{ brand: brandId }} className="underline">
-					tracked competitors list
+					追跡中の競合リスト
 				</Link>
-				. Other domains appear under their detected category (Google, Social Media, Institutional, or Other).
+				に追加したものだけを指します。それ以外のドメインは、検出されたカテゴリ(Google、ソーシャルメディア、公的機関、その他)に分類されて表示されます。
 			</p>
 		</>
 	);
@@ -75,8 +74,8 @@ function CitationsPage() {
 
 	return (
 		<PageHeader
-			title="Citations"
-			subtitle="See which sources LLMs cite when responding to your prompts."
+			title="引用"
+			subtitle="AIモデルがプロンプトへの回答で引用しているソースを確認できます。"
 			infoContent={infoContent}
 		>
 			<FilteredListShell
@@ -104,19 +103,19 @@ function CitationsPage() {
 					<Card>
 						<CardContent className="pt-6">
 							<div className="text-red-600 text-sm bg-red-50 p-3 rounded-md">
-								Failed to load citation data. Please try again.
+								引用データの読み込みに失敗しました。もう一度お試しください。
 							</div>
 						</CardContent>
 					</Card>
 				}
 				totalCount={citationData?.totalCitations}
-				noMatchesTitle="No citations found for the selected filters."
-				noMatchesDescription="Try adjusting your filters or time period."
+				noMatchesTitle="選択したフィルターに該当する引用が見つかりませんでした。"
+				noMatchesDescription="フィルターや期間を変更してお試しください。"
 				emptyState={
 					<Card>
 						<CardContent className="pt-6">
 							<div className="text-muted-foreground text-center py-8">
-								No citations found. Citations are only available from prompts evaluated with web search enabled.
+								引用が見つかりませんでした。引用はWeb検索が有効なプロンプトの評価結果からのみ取得できます。
 							</div>
 						</CardContent>
 					</Card>

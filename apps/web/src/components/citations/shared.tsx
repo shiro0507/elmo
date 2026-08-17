@@ -24,13 +24,13 @@ export const formatUrlForDisplay = (url: string) => {
 };
 
 export function formatPeriodLabel(days: number): string {
-	if (days === 1) return "24 hours";
-	if (days === 7) return "week";
-	if (days === 14) return "2 weeks";
-	if (days === 30) return "month";
-	if (days === 60) return "2 months";
-	if (days === 90) return "3 months";
-	return `${days} days`;
+	if (days === 1) return "24時間";
+	if (days === 7) return "1週間";
+	if (days === 14) return "2週間";
+	if (days === 30) return "1か月";
+	if (days === 60) return "2か月";
+	if (days === 90) return "3か月";
+	return `${days}日間`;
 }
 
 export const extractSubreddit = (url: string): string | null => {
@@ -73,7 +73,7 @@ export function UnderlineTabs<T extends string>({
 	onSelect: (key: T) => void;
 }) {
 	return (
-		<nav className="-mb-px flex gap-4 overflow-x-auto border-b border-border" aria-label="Tabs">
+		<nav className="-mb-px flex gap-4 overflow-x-auto border-b border-border" aria-label="タブ">
 			{tabs.map(({ key, label }) => (
 				<button
 					key={key}

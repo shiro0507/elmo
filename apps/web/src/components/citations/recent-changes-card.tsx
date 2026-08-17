@@ -15,11 +15,11 @@ import { formatPeriodLabel, formatUrlForDisplay, UnderlineTabs } from "@/compone
 type ChangeType = "new_pages" | "dropped_pages" | "title" | "new_domains" | "dropped_domains";
 
 const CHANGE_TYPE_TABS: { key: ChangeType; label: string }[] = [
-	{ key: "new_pages", label: "New Pages" },
-	{ key: "dropped_pages", label: "Dropped Pages" },
-	{ key: "title", label: "Title Changes" },
-	{ key: "new_domains", label: "New Domains" },
-	{ key: "dropped_domains", label: "Dropped Domains" },
+	{ key: "new_pages", label: "新規ページ" },
+	{ key: "dropped_pages", label: "削除されたページ" },
+	{ key: "title", label: "タイトル変更" },
+	{ key: "new_domains", label: "新規ドメイン" },
+	{ key: "dropped_domains", label: "削除されたドメイン" },
 ];
 
 export function RecentChangesCard({
@@ -51,18 +51,18 @@ export function RecentChangesCard({
 		<Card className="h-full flex flex-col">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-1.5">
-					Recent Changes
+					最近の変更
 					<Tooltip>
 						<TooltipTrigger asChild>
 							<IconInfoCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
 						</TooltipTrigger>
 						<TooltipContent className="max-w-xs text-sm font-normal">
-							Compares this {formatPeriodLabel(days)} with the {formatPeriodLabel(days)} before it. Shows new and
-							dropped pages, title changes, and new and dropped domains.
+							直近の{formatPeriodLabel(days)}とその前の{formatPeriodLabel(days)}
+							を比較します。新規・削除されたページ、タイトル変更、新規・削除されたドメインを表示します。
 						</TooltipContent>
 					</Tooltip>
 				</CardTitle>
-				<CardDescription>How AI citations have shifted over the past {formatPeriodLabel(days)}</CardDescription>
+				<CardDescription>過去{formatPeriodLabel(days)}でAIの引用がどう変化したか</CardDescription>
 			</CardHeader>
 			<Separator />
 			<CardContent className="flex-1">
@@ -91,9 +91,9 @@ export function RecentChangesCard({
 
 						let description: React.ReactNode = null;
 						if (change.type === "new_pages" && "promptCount" in change) {
-							description = `0 → ${change.count} citations across ${change.promptCount} prompt${change.promptCount !== 1 ? "s" : ""}`;
+							description = `0 → ${change.count}件の引用(${change.promptCount}件のプロンプトにわたる)`;
 						} else if (change.type === "dropped_pages" && "previousCount" in change) {
-							description = `${change.previousCount} → ${change.currentCount} citations`;
+							description = `${change.previousCount} → ${change.currentCount}件の引用`;
 						} else if (change.type === "title" && "currentTitle" in change && "previousTitle" in change) {
 							description = (
 								<>
@@ -103,9 +103,9 @@ export function RecentChangesCard({
 								</>
 							);
 						} else if (change.type === "new_domains" && "count" in change) {
-							description = `${change.count} citation${change.count !== 1 ? "s" : ""} in the current period`;
+							description = `今期間で${change.count}件の引用`;
 						} else if (change.type === "dropped_domains" && "previousCount" in change) {
-							description = `${change.previousCount} citation${change.previousCount !== 1 ? "s" : ""} last period, none now`;
+							description = `前期間は${change.previousCount}件の引用があったが、現在はなし`;
 						}
 
 						const inner = (
@@ -141,8 +141,8 @@ export function RecentChangesCard({
 					})}
 					{visibleChanges.length === 0 && (
 						<p className="text-sm text-muted-foreground text-center py-4">
-							No {CHANGE_TYPE_TABS.find((t) => t.key === changeTypeFilter)?.label.toLowerCase() ?? changeTypeFilter}{" "}
-							changes in this period.
+							この期間、{CHANGE_TYPE_TABS.find((t) => t.key === changeTypeFilter)?.label ?? changeTypeFilter}
+							の変更はありません。
 						</p>
 					)}
 				</div>

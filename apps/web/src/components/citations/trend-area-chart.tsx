@@ -56,7 +56,7 @@ export function TrendAreaChart({
 							tickFormatter={(value) => {
 								const [year, month, day] = String(value).split("-").map(Number);
 								const date = new Date(year, month - 1, day);
-								return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+								return date.toLocaleDateString("ja-JP", { month: "short", day: "numeric" });
 							}}
 						/>
 						<YAxis
@@ -76,7 +76,7 @@ export function TrendAreaChart({
 								const dp = payload[0]?.payload as Record<string, number | string> | undefined;
 								const [year, month, day] = String(label).split("-").map(Number);
 								const date = new Date(year, month - 1, day);
-								const formattedDate = date.toLocaleDateString("en-US", {
+								const formattedDate = date.toLocaleDateString("ja-JP", {
 									month: "long",
 									day: "numeric",
 									year: "numeric",
