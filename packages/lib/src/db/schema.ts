@@ -237,3 +237,14 @@ export const secrets = pgTable("secrets", {
 		.$onUpdate(() => new Date())
 		.notNull(),
 }).enableRLS();
+
+// LLM-classified fallback for domains the curated category lists (in
+// apps/web/src/lib/domain-categories.server.ts) don't recognize. Global —
+// not scoped to a brand — since a domain's category (editorial, ecommerce,
+// etc.) doesn't depend on which brand is viewing it. "brand"/"competitor"
+// are never stored here; those are resolved per-request from brand data.
+export const domainCategories = pgTable("domain_categories", {
+	domain: text("domain").primaryKey().notNull(),
+	category: text("category").notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}).enableRLS();

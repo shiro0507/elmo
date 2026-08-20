@@ -3,6 +3,10 @@
 // this from a client module would bloat the browser bundle — keep it confined to
 // server functions. Client code imports types/config from `./domain-categories`.
 
+import { inArray } from "drizzle-orm";
+import { db } from "@workspace/lib/db/db";
+import { domainCategories } from "@workspace/lib/db/schema";
+import { enqueueClassifyDomains } from "@/lib/classify-domain-job";
 import { EDITORIAL_DOMAINS } from "./editorial-domains";
 import { type CitationCategory, inferPageType, isForumDomain, FORUM_DOMAINS } from "./domain-categories";
 
@@ -567,6 +571,56 @@ export function categorizeDomain(
 }
 
 /**
+ * Like `categorizeDomain`, but for domains the curated lists above land on
+ * "other": consults the domain_categories cache (LLM-classified on a prior
+ * request) before giving up. Domains that are still unknown after the cache
+ * check are returned as "other" (unchanged behavior) and queued for
+ * background classification — never blocks the request on an LLM call.
+ */
+export async function categorizeDomainsCached(
+	domains: Iterable<string>,
+	brandDomains: Set<string>,
+	competitorDomains: Set<string>,
+): Promise<Map<string, CitationCategory>> {
+	const result = new Map<string, CitationCategory>();
+	const unresolved: string[] = [];
+
+	for (const domain of new Set(domains)) {
+		const category = categorizeDomain(domain, brandDomains, competitorDomains);
+		if (category === "other") {
+			unresolved.push(domain);
+		} else {
+			result.set(domain, category);
+		}
+	}
+
+	if (unresolved.length === 0) return result;
+
+	const cached = await db
+		.select({ domain: domainCategories.domain, category: domainCategories.category })
+		.from(domainCategories)
+		.where(inArray(domainCategories.domain, unresolved));
+	const cachedByDomain = new Map(cached.map((row) => [row.domain, row.category as CitationCategory]));
+
+	const stillUnknown: string[] = [];
+	for (const domain of unresolved) {
+		const cachedCategory = cachedByDomain.get(domain);
+		if (cachedCategory) {
+			result.set(domain, cachedCategory);
+		} else {
+			result.set(domain, "other");
+			stillUnknown.push(domain);
+		}
+	}
+
+	if (stillUnknown.length > 0) {
+		void enqueueClassifyDomains(stillUnknown);
+	}
+
+	return result;
+}
+
+/**
  * The curated domain lists categorizeDomain consults, in precedence order. Exported
  * so a test can assert they're mutually exclusive: a domain in two lists would be
  * silently resolved by whichever is checked first (the slickdeals class of bug). The
@@ -600,8 +654,21 @@ export function classifyUrl(
 	brandDomains: Set<string>,
 	competitorDomains: Set<string>,
 ): CitationCategory {
-	const cat = categorizeDomain(domain, brandDomains, competitorDomains);
-	if (cat !== "other") return cat;
+	return classifyUrlWithCategory(categorizeDomain(domain, brandDomains, competitorDomains), url, title);
+}
+
+/**
+ * Same fallback logic as `classifyUrl`, but takes an already-resolved domain
+ * category instead of computing one — lets callers plug in a category from
+ * `categorizeDomainsCached` (curated lists + the LLM-classification cache)
+ * without recomputing it per URL.
+ */
+export function classifyUrlWithCategory(
+	domainCategory: CitationCategory,
+	url: string,
+	title: string | null | undefined,
+): CitationCategory {
+	if (domainCategory !== "other") return domainCategory;
 	const pt = inferPageType(url, title);
 	if (pt === "forum") return "social"; // a forum page on an unlisted domain is still community / UGC
 	if (EDITORIAL_PAGE_TYPES.has(pt)) return "editorial";

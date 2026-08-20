@@ -24,10 +24,7 @@ import {
 	resolvePageType,
 	isGoogleSurfaceUrl,
 } from "@/lib/domain-categories";
-import {
-	categorizeDomain as categorizeDomainShared,
-	classifyUrl as classifyUrlShared,
-} from "@/lib/domain-categories.server";
+import { categorizeDomainsCached, classifyUrlWithCategory } from "@/lib/domain-categories.server";
 import { buildGoogleModule, emptyGoogleModule } from "@/lib/google-module";
 
 /**
@@ -184,11 +181,24 @@ export const getCitationsFn = createServerFn({ method: "GET" })
 			getCitationUrlStats(data.brandId, prevFromDateStr, prevToDateStr, timezone, enabledPromptIds, data.model),
 		]);
 
+		// Resolve every domain's category ONCE up front (curated lists, falling
+		// back to the domain_categories LLM-classification cache) so the loops
+		// below stay synchronous. Domains unresolved even by the cache are
+		// queued for background classification as a side effect — see
+		// categorizeDomainsCached.
+		const allDomains = [
+			...urlStats.map((r) => r.domain),
+			...prevUrlStats.map((r) => r.domain),
+			...perPromptPages.map((r) => r.domain),
+			...perPromptDailyPages.map((r) => r.domain),
+		];
+		const domainCategoryMap = await categorizeDomainsCached(allDomains, brandDomains, competitorDomains);
+
 		function categorizeDomain(domain: string): CitationCategory {
-			return categorizeDomainShared(domain, brandDomains, competitorDomains);
+			return domainCategoryMap.get(domain) ?? "other";
 		}
 		const classify = (domain: string, url: string, title: string | null | undefined): CitationCategory =>
-			classifyUrlShared(domain, url, title, brandDomains, competitorDomains);
+			classifyUrlWithCategory(domainCategoryMap.get(domain) ?? "other", url, title);
 
 		// Google search/shopping surfaces (Google AI Mode) are pulled OUT of the
 		// source mix and surfaced in their own module below. Previous-period domain

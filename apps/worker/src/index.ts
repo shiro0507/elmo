@@ -64,6 +64,12 @@ async function main() {
 		retryBackoff: true,
 		expireInSeconds: 60 * 30, // 30 minute timeout
 	});
+	await boss.createQueue("classify-domain", {
+		retryLimit: 2,
+		retryDelay: 30,
+		retryBackoff: true,
+		expireInSeconds: 60 * 5, // single LLM call, should be quick
+	});
 	if (process.env.DEPLOYMENT_MODE === "whitelabel") {
 		await boss.createQueue("sync-auth0-memberships", {
 			retryLimit: 3,
