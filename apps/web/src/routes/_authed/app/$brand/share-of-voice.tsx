@@ -30,7 +30,7 @@ export const Route = createFileRoute("/_authed/app/$brand/share-of-voice")({
 		return {
 			meta: [
 				{ title: buildTitle("言及シェア", { appName, brandName }) },
-				{ name: "description", content: "See how often AI engines mention you versus your competitors." },
+				{ name: "description", content: "AIエンジンが自社と競合にどのくらいの頻度で言及しているかを確認できます。" },
 			],
 		};
 	},
@@ -70,10 +70,9 @@ function ShareOfVoicePage() {
 	const infoContent = (
 		<>
 			<p className="mb-2">
-				Share of voice is how often each brand is mentioned in the AI answers to your prompts. Mentions are counted per
-				run, so the brand and competitor figures use the same unit and are directly comparable.
+				言及シェアとは、プロンプトへのAIの回答の中で、各ブランドがどのくらいの頻度で言及されているかを示す指標です。言及は実行(ラン)単位でカウントされるため、自社と競合の数値は同じ単位で直接比較できます。
 			</p>
-			<p>Competitors are the ones you track in settings. Switch the model filter to compare engines.</p>
+			<p>競合は設定画面で追跡しているブランドです。モデルフィルターを切り替えれば、エンジンごとの比較もできます。</p>
 		</>
 	);
 
@@ -209,7 +208,7 @@ function ShareOfVoicePage() {
 	return (
 		<PageHeader
 			title="言及シェア"
-			subtitle="How often AI engines mention you versus your competitors."
+			subtitle="AIエンジンが自社と競合にどのくらいの頻度で言及しているかを確認できます。"
 			infoContent={infoContent}
 		>
 			<FilterSection>
