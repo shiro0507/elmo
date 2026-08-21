@@ -211,7 +211,7 @@ function DashboardPage() {
 							<Card className="shadow-none lg:col-span-3 flex flex-col gap-3 py-4">
 								<CardHeader className="border-b border-dotted pb-2!">
 									<CardTitle className="text-sm font-medium flex items-center gap-1.5 text-muted-foreground">
-										AI言及率トレンド (30日間)
+										AI言及率推移 (30日間)
 										<IconInfoCircle className="h-3.5 w-3.5 opacity-70" />
 									</CardTitle>
 								</CardHeader>
@@ -388,7 +388,7 @@ function DashboardPage() {
 						<Card className="shadow-none lg:col-span-3 flex flex-col gap-3 py-4">
 							<CardHeader className="border-b border-dotted pb-2!">
 								<CardTitleWithTooltip
-									title="AI言及率トレンド (30日間)"
+									title="AI言及率推移 (30日間)"
 									tooltip={`プロンプトへのAIの回答のうち、自社ブランドが言及された割合です — 大きく表示されている数字はこの折れ線の最新地点を示します。ブランド名を含まないプロンプトに限ると${nonBrandedVisibility}%です。AI言及率は、AIモデルの変化、追跡しているプロンプト、AIが参照するサイトの変動により変わります。プロンプトの実行タイミングのばらつきを均すため、折れ線は平滑化されています。`}
 								/>
 							</CardHeader>

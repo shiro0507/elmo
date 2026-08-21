@@ -47,7 +47,7 @@ function VisibilityPage() {
 	return (
 		<PromptsDisplay
 			pageTitle="AI言及率"
-			pageDescription="自社ブランドに関連するプロンプトを、LLMがどう評価しているか確認できます。"
+			pageDescription="自社に関連するプロンプトを、LLMがどう評価しているか確認できます。"
 			pageInfoContent={infoContent}
 			editLink={`/app/${brandId}/settings/prompts`}
 		/>
