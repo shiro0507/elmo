@@ -68,7 +68,7 @@ export function BaseChart({
 	const chartColors = chartColorsProp ?? context.clientConfig?.branding.chartColors ?? [];
 	const chartConfig: ChartConfig = {
 		visitors: {
-			label: "Visibility",
+			label: "AI言及率",
 		},
 		[brand.id]: {
 			label: brand.name,

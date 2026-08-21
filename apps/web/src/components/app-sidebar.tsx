@@ -75,7 +75,7 @@ export function AppSidebar({
 		if (brand?.onboarded) {
 			dashboardItems.push(
 				{
-					title: "Visibility",
+					title: "AI言及率",
 					url: "/visibility",
 					icon: IconChartBar,
 				},

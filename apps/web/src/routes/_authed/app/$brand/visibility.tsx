@@ -23,8 +23,8 @@ export const Route = createFileRoute("/_authed/app/$brand/visibility")({
 		const brandName = getBrandName(matches);
 		return {
 			meta: [
-				{ title: buildTitle("Visibility", { appName, brandName }) },
-				{ name: "description", content: "Track how LLMs respond to prompts about your brand." },
+				{ title: buildTitle("AI言及率", { appName, brandName }) },
+				{ name: "description", content: "LLMが自社ブランドに関するプロンプトにどう応答しているかを追跡できます。" },
 			],
 		};
 	},
@@ -36,18 +36,18 @@ function VisibilityPage() {
 
 	const infoContent = (
 		<>
-			Track how different LLMs respond to prompts related to your brand, products, and{" "}
+			自社ブランド・製品・
 			<Link to="/app/$brand/settings/competitors" params={{ brand: brandId }} className="underline">
-				competitors
+				競合
 			</Link>
-			.
+			に関連するプロンプトに、各LLMがどう応答しているかを確認できます。
 		</>
 	);
 
 	return (
 		<PromptsDisplay
-			pageTitle="Visibility"
-			pageDescription="See how LLMs are evaluating prompts related to your brand."
+			pageTitle="AI言及率"
+			pageDescription="自社ブランドに関連するプロンプトを、LLMがどう評価しているか確認できます。"
 			pageInfoContent={infoContent}
 			editLink={`/app/${brandId}/settings/prompts`}
 		/>

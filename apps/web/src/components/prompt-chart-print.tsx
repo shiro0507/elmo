@@ -136,7 +136,7 @@ export function PromptChartPrint({
 				return lastDataPoint && brand ? (lastDataPoint[brand.id] as number) : null;
 			})();
 
-	const badgeLabel = isReportContext ? "SoV" : "Visibility";
+	const badgeLabel = isReportContext ? "SoV" : "AI言及率";
 
 	if (hasNoRuns) {
 		const message = hasEverBeenEvaluated ? "No data in selected time range" : "Evaluating for the first time...";

@@ -196,11 +196,11 @@ function DashboardPage() {
 						<div className="flex items-center justify-between">
 							<h2 className="text-lg font-semibold flex items-center gap-2">
 								<IconEye className="h-5 w-5 text-muted-foreground" />
-								AI Visibility
+								AI言及率
 							</h2>
 							<Button asChild variant="ghost" size="sm" className="h-8">
 								<Link to="/app/$brand/visibility" params={{ brand: brandId }}>
-									View Visibility <IconArrowRight className="h-4 w-4 ml-1" />
+									AI言及率を見る <IconArrowRight className="h-4 w-4 ml-1" />
 								</Link>
 							</Button>
 						</div>
@@ -211,7 +211,7 @@ function DashboardPage() {
 							<Card className="shadow-none lg:col-span-3 flex flex-col gap-3 py-4">
 								<CardHeader className="border-b border-dotted pb-2!">
 									<CardTitle className="text-sm font-medium flex items-center gap-1.5 text-muted-foreground">
-										Visibility Trends (30d)
+										AI言及率トレンド (30日間)
 										<IconInfoCircle className="h-3.5 w-3.5 opacity-70" />
 									</CardTitle>
 								</CardHeader>
@@ -367,11 +367,11 @@ function DashboardPage() {
 					<div className="flex items-center justify-between">
 						<h2 className="text-lg font-semibold flex items-center gap-2">
 							<IconEye className="h-5 w-5 text-muted-foreground" />
-							AI Visibility
+							AI言及率
 						</h2>
 						<Button asChild variant="ghost" size="sm" className="h-8">
 							<Link to="/app/$brand/visibility" params={{ brand: brandId }}>
-								View Visibility <IconArrowRight className="h-4 w-4 ml-1" />
+								AI言及率を見る <IconArrowRight className="h-4 w-4 ml-1" />
 							</Link>
 						</Button>
 					</div>
@@ -388,8 +388,8 @@ function DashboardPage() {
 						<Card className="shadow-none lg:col-span-3 flex flex-col gap-3 py-4">
 							<CardHeader className="border-b border-dotted pb-2!">
 								<CardTitleWithTooltip
-									title="Visibility Trends (30d)"
-									tooltip={`The percentage of AI answers to your prompts that mention your brand — the big number is the latest point on this line. For prompts that don't name your brand, it's ${nonBrandedVisibility}%. Visibility shifts as AI models, the prompts you track, or the sites AI scans change; the line is smoothed for staggered prompt schedules.`}
+									title="AI言及率トレンド (30日間)"
+									tooltip={`プロンプトへのAIの回答のうち、自社ブランドが言及された割合です — 大きく表示されている数字はこの折れ線の最新地点を示します。ブランド名を含まないプロンプトに限ると${nonBrandedVisibility}%です。AI言及率は、AIモデルの変化、追跡しているプロンプト、AIが参照するサイトの変動により変わります。プロンプトの実行タイミングのばらつきを均すため、折れ線は平滑化されています。`}
 								/>
 							</CardHeader>
 							<CardContent className="flex-1 min-h-[100px]">
@@ -398,7 +398,7 @@ function DashboardPage() {
 								) : (
 									<TrendChart
 										data={visibilityTimeSeries.map((p) => ({ date: p.date, value: p.overall }))}
-										label="AI Visibility (7d avg)"
+										label="AI言及率 (7日平均)"
 										color="#2563eb"
 									/>
 								)}
@@ -476,7 +476,7 @@ function DashboardPage() {
 							<>
 								<StatWithTooltip
 									icon={IconList}
-									label="prompts tracked"
+									label="個のプロンプトが登録済"
 									value={totalPrompts.toLocaleString()}
 									tooltip="Total number of unique prompts being monitored for AI visibility across ChatGPT, Claude, and Gemini."
 								/>

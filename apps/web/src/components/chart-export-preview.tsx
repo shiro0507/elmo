@@ -66,7 +66,7 @@ export function ChartExportPreview({
 						className={`${getBadgeClassName(visibility)} shrink-0`}
 						style={{ fontSize: 16, padding: "4px 14px" }}
 					>
-						{visibility}% Visibility
+						{visibility}% AI言及率
 					</Badge>
 				)}
 			</div>

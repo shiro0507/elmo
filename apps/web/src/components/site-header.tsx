@@ -15,7 +15,7 @@ import { Link } from "@tanstack/react-router";
 
 /** Map of page segments to display names */
 const PAGE_NAMES: Record<string, string> = {
-	visibility: "Visibility",
+	visibility: "AI言及率",
 	"share-of-voice": "言及シェア",
 	"query-fan-out": "Query Fan-Out",
 	opportunities: "Opportunities",
@@ -151,10 +151,10 @@ function BrandBreadcrumbs({
 						<BreadcrumbLink asChild>
 							{brandId ? (
 								<Link to="/app/$brand/visibility" params={{ brand: brandId }}>
-									Visibility
+									AI言及率
 								</Link>
 							) : (
-								<span>Visibility</span>
+								<span>AI言及率</span>
 							)}
 						</BreadcrumbLink>
 					</BreadcrumbItem>

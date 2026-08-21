@@ -83,7 +83,7 @@ export function VisibilityBar({
 			{/* Left side: visibility + chart + info */}
 			<div className="flex items-center gap-2 min-w-0 shrink-0">
 				<span className={`text-base sm:text-lg font-semibold whitespace-nowrap ${colors.text}`}>
-					{currentVisibility}% <span className="font-normal">Visibility</span>
+					{currentVisibility}% <span className="font-normal">AI言及率</span>
 				</span>
 
 				{showChart && (
