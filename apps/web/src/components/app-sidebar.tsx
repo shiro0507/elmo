@@ -65,7 +65,7 @@ export function AppSidebar({
 	if (!adminOnly) {
 		const dashboardItems = [
 			{
-				title: "Overview",
+				title: "概要",
 				url: "/",
 				icon: IconDashboard,
 			},
@@ -90,12 +90,12 @@ export function AppSidebar({
 					icon: IconSitemap,
 				},
 				{
-					title: "Citations",
+					title: "引用",
 					url: "/citations",
 					icon: IconLink,
 				},
 				{
-					title: "Opportunities",
+					title: "解析結果",
 					url: "/opportunities",
 					icon: IconTarget,
 				},
@@ -110,25 +110,25 @@ export function AppSidebar({
 		// Settings section - only show if onboarded
 		if (brand?.onboarded) {
 			groups.push({
-				label: "Settings",
+				label: "設定",
 				items: [
 					{
-						title: "Brand",
+						title: "自社について",
 						url: "/settings/brand",
 						icon: IconBuilding,
 					},
 					{
-						title: "Competitors",
+						title: "競合について",
 						url: "/settings/competitors",
 						icon: IconBuildings,
 					},
 					{
-						title: "Prompts",
+						title: "プロンプト",
 						url: "/settings/prompts",
 						icon: IconListDetails,
 					},
 					{
-						title: "LLMs",
+						title: "LLMの設定",
 						url: "/settings/llms",
 						icon: IconCpu,
 					},

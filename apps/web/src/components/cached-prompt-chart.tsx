@@ -229,7 +229,7 @@ export const CachedPromptChart = memo(function CachedPromptChart({
 					<PromptTitle name={promptName} highlight={searchHighlight} />
 					{lastBrandVisibility !== null && (
 						<Badge variant={getBadgeVariant(lastBrandVisibility)} className={getBadgeClassName(lastBrandVisibility)}>
-							{lastBrandVisibility}% AI言及率
+							AI言及率 {lastBrandVisibility}% 
 						</Badge>
 					)}
 				</CardHeader>

@@ -112,9 +112,7 @@ export function VisibilityBar({
 						<IconInfoCircle className={`h-3.5 w-3.5 shrink-0 ${colors.muted} cursor-help`} />
 					</TooltipTrigger>
 					<TooltipContent side="bottom" className="max-w-xs text-sm">
-						AI visibility for the {totalPrompts.toLocaleString()} prompt{totalPrompts !== 1 ? "s" : ""} shown below,
-						calculated as the percentage of AI responses that mention your brand over the time period for the selected
-						filters.
+						以下に表示されている{totalPrompts.toLocaleString()}件のプロンプトのAI言及率です。選択した期間・フィルターにおいて、自社ブランドが言及されたAI回答の割合として算出しています。
 					</TooltipContent>
 				</Tooltip>
 			</div>
@@ -122,13 +120,13 @@ export function VisibilityBar({
 			{/* Right side: stats */}
 			<div className={`flex items-center gap-x-3 text-xs sm:text-sm ${colors.muted}`}>
 				<span>
-					<span className="font-medium">{totalPrompts.toLocaleString()}</span> prompts
+					<span className="font-medium">{totalPrompts.toLocaleString()}</span> プロンプト
 				</span>
 				<span>
-					<span className="font-medium">{totalRuns.toLocaleString()}</span> runs
+					<span className="font-medium">{totalRuns.toLocaleString()}</span> 実行
 				</span>
 				<span>
-					<span className="font-medium">{totalCitations.toLocaleString()}</span> citations
+					<span className="font-medium">{totalCitations.toLocaleString()}</span> 引用
 				</span>
 			</div>
 		</div>
@@ -154,7 +152,7 @@ export function VisibilityBarSkeleton() {
 export function VisibilityBarEmpty() {
 	return (
 		<div className="flex items-center min-h-10 px-3 py-2 rounded-lg border border-border/60 bg-muted/20">
-			<span className="text-sm text-muted-foreground">No visibility data for the selected time range and filters.</span>
+			<span className="text-sm text-muted-foreground">選択した期間・フィルターに該当するAI言及率のデータがありません。</span>
 		</div>
 	);
 }
