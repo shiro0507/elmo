@@ -23,8 +23,8 @@ export const Route = createFileRoute("/_authed/app/$brand/opportunities")({
 		const brandName = getBrandName(matches);
 		return {
 			meta: [
-				{ title: buildTitle("Opportunities", { appName, brandName }) },
-				{ name: "description", content: "AI-generated opportunities to earn more AI citations." },
+				{ title: buildTitle("解析結果", { appName, brandName }) },
+				{ name: "description", content: "AI引用を増やすための、AIが生成した施策提案です。" },
 			],
 		};
 	},
@@ -35,18 +35,17 @@ function OpportunitiesPage() {
 	const { brand: brandId } = Route.useParams();
 	const { data, isLoading, isError } = useOpportunities(brandId);
 
-	const infoContent = "Recommendations based on your visibility and citation metrics. Refreshed weekly.";
+	const infoContent = "AI言及率・引用の指標をもとにした提案です。毎週更新されます。";
 
 	let content: React.ReactNode;
 	if (isLoading) {
 		content = <LoadingState />;
 	} else if (isError) {
-		content = <EmptyCard>Couldn't generate recommendations right now. Reload the page to try again.</EmptyCard>;
+		content = <EmptyCard>現在、提案を生成できませんでした。ページを再読み込みしてもう一度お試しください。</EmptyCard>;
 	} else if (!data || data.reason === "insufficient-data" || !data.report) {
 		content = (
 			<EmptyCard>
-				We need a bit more tracking data before we can recommend opportunities — check back once your prompts have run
-				for a few days.
+				提案を行うにはもう少しトラッキングデータが必要です — プロンプトが数日間実行されてから、再度確認してください。
 			</EmptyCard>
 		);
 	} else {
@@ -55,8 +54,8 @@ function OpportunitiesPage() {
 
 	return (
 		<PageHeader
-			title="Opportunities"
-			subtitle="What to create, pitch, and seed to earn more AI citations — generated from your tracked answer data."
+			title="解析結果"
+			subtitle="AIからの引用を増やすために、何を作成・提案・展開すべきか — トラッキングしている回答データから生成しています。"
 			infoContent={infoContent}
 		>
 			<div className="space-y-6">
@@ -71,7 +70,7 @@ function LastEvaluatedAt({ date }: { date: string }) {
 	return (
 		<p className="flex items-center gap-1.5 text-sm text-muted-foreground">
 			<IconClock className="size-4" aria-hidden />
-			Last evaluated{" "}
+			最終評価:{" "}
 			<time dateTime={date}>
 				{new Date(date).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}
 			</time>
@@ -92,7 +91,7 @@ function LoadingState() {
 		<div className="space-y-6">
 			<div className="flex items-center gap-2 text-sm text-muted-foreground">
 				<IconLoader2 className="size-4 animate-spin" />
-				Analyzing your citation landscape and drafting your opportunities…
+				引用状況を分析し、施策を作成しています…
 			</div>
 			<div className="space-y-2">
 				<Skeleton className="h-6 w-2/3" />
