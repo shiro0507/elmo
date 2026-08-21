@@ -55,7 +55,7 @@ function OpportunitiesPage() {
 	return (
 		<PageHeader
 			title="解析結果"
-			subtitle="AIからの引用を増やすために、何を作成・提案・展開すべきか — トラッキングしている回答データから生成しています。"
+			subtitle="AIからの引用を増やし、自社の言及を増やすために、何をすべきかの提案です。"
 			infoContent={infoContent}
 		>
 			<div className="space-y-6">

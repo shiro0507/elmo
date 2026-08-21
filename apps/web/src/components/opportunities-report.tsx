@@ -12,12 +12,12 @@ const CATEGORY_META = [
 	{
 		key: "creation",
 		label: "新規コンテンツ",
-		desc: "新規に公開・獲得すべきコンテンツ — 比較記事、ガイド、自社が手薄なトピックの「おすすめ◯選」系コンテンツなど。",
+		desc: "新規に公開・獲得すべきコンテンツ。比較記事、ガイド、自社が手薄なトピックの「おすすめ◯選」系コンテンツなど。",
 	},
 	{
 		key: "existing-content",
 		label: "既存コンテンツ",
-		desc: "すでに引用されているが順位が落ちてきているページ、またはリフレッシュすれば言及を獲得できそうなページ。",
+		desc: "すでに引用されているが順位が落ちてきているページ、更新すれば言及を獲得できそうなページ。",
 	},
 	{
 		key: "outreach",
@@ -27,7 +27,7 @@ const CATEGORY_META = [
 	{
 		key: "social",
 		label: "ソーシャル",
-		desc: "AIが参照するコミュニティの会話(Reddit、YouTube、フォーラムなど)に登場する。",
+		desc: "AIが参照するコミュニティ(Reddit、YouTube、フォーラムなど)への露出。",
 	},
 ] as const;
 
@@ -138,7 +138,7 @@ export function OpportunitiesReport({ report, brandId }: { report: Opportunities
 		<div className="space-y-8">
 			{report.summary.length > 0 && (
 				<section className="rounded-xl border border-border bg-muted/30 p-5">
-					<h2 className="text-sm font-semibold text-muted-foreground">サマリー</h2>
+					<h2 className="text-sm font-semibold text-muted-foreground">まとめ</h2>
 					<div className="mt-2.5">
 						<BulletList items={report.summary} />
 					</div>
@@ -173,7 +173,7 @@ export function OpportunitiesReport({ report, brandId }: { report: Opportunities
 			)}
 
 			<p className="text-xs text-muted-foreground">
-				トラッキングしている引用データからAIが生成しています。あくまで出発点としての提案です — 実施前に自身の判断で確認してください。
+				トラッキングしている引用データからAIが生成しています。あくまで出発点としての提案です。実施前に自身の判断で確認してください。
 			</p>
 		</div>
 	);
