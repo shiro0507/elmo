@@ -101,7 +101,7 @@ export const Route = createFileRoute("/_authed/reports/render/$reportId")({
 		return { report };
 	},
 	head: () => ({
-		meta: [{ title: "AI Share of Voice Report" }, { name: "robots", content: "noindex, nofollow" }],
+		meta: [{ title: "AI言及シェアレポート" }, { name: "robots", content: "noindex, nofollow" }],
 	}),
 	component: ReportRenderPage,
 });
@@ -308,7 +308,7 @@ function ReportRenderPage() {
 
 				<div className="flex-1 flex flex-col justify-center">
 					<div className="text-[10px] font-semibold tracking-[0.25em] uppercase text-slate-400 mb-4">
-						AI Share of Voice Report
+						AI言及シェアレポート
 					</div>
 					<h1 className="text-4xl font-bold tracking-tight mb-2">{report.brandName}</h1>
 					<div className="w-16 h-[2px] bg-slate-800 mb-12" />
@@ -319,7 +319,7 @@ function ReportRenderPage() {
 								{overallSoV !== null ? `${overallSoV}%` : "N/A"}
 							</span>
 							<div>
-								<div className="text-sm font-semibold">Share of Voice</div>
+								<div className="text-sm font-semibold">言及シェア</div>
 								<div className="text-xs text-slate-500">
 									{sovLevel.label} &mdash; {sovLevel.description}
 								</div>
@@ -611,8 +611,8 @@ function ReportRenderPage() {
 				<RunningHeader brand={report.brandName} />
 
 				<Section
-					title="Share of Voice Opportunity"
-					subtitle="Overview of your current AI share of voice and growth potential"
+					title="言及シェアの機会"
+					subtitle="現在のAI言及シェアと、成長の余地について"
 				/>
 
 				<div className="border border-slate-200 rounded-lg overflow-hidden mb-8">
@@ -797,7 +797,7 @@ function RunningHeader({ brand }: { brand: string }) {
 	return (
 		<div className="flex items-center justify-between mb-6 pb-3 border-b border-slate-100">
 			<span className="text-[10px] font-semibold tracking-[0.2em] uppercase text-slate-400">
-				AI Share of Voice Report
+				AI言及シェアレポート
 			</span>
 			<span className="text-[10px] font-medium text-slate-400">{brand}</span>
 		</div>

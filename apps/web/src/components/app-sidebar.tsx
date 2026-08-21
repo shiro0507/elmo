@@ -80,7 +80,7 @@ export function AppSidebar({
 					icon: IconChartBar,
 				},
 				{
-					title: "Share of Voice",
+					title: "言及シェア",
 					url: "/share-of-voice",
 					icon: IconSpeakerphone,
 				},

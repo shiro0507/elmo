@@ -227,11 +227,11 @@ function DashboardPage() {
 						<div className="flex items-center justify-between">
 							<h2 className="text-lg font-semibold flex items-center gap-2">
 								<IconSpeakerphone className="h-5 w-5 text-muted-foreground" />
-								Share of Voice
+								言及シェア
 							</h2>
 							<Button asChild variant="ghost" size="sm" className="h-8">
 								<Link to="/app/$brand/share-of-voice" params={{ brand: brandId }}>
-									View Share of Voice <IconArrowRight className="h-4 w-4 ml-1" />
+									言及シェアを見る <IconArrowRight className="h-4 w-4 ml-1" />
 								</Link>
 							</Button>
 						</div>
@@ -242,7 +242,7 @@ function DashboardPage() {
 							<Card className="shadow-none lg:col-span-3 flex flex-col gap-3 py-4">
 								<CardHeader className="border-b border-dotted pb-2!">
 									<CardTitle className="text-sm font-medium flex items-center gap-1.5 text-muted-foreground">
-										Share of Voice Trends (30d)
+										言及シェアトレンド (30日間)
 										<IconInfoCircle className="h-3.5 w-3.5 opacity-70" />
 									</CardTitle>
 								</CardHeader>
@@ -412,11 +412,11 @@ function DashboardPage() {
 					<div className="flex items-center justify-between">
 						<h2 className="text-lg font-semibold flex items-center gap-2">
 							<IconSpeakerphone className="h-5 w-5 text-muted-foreground" />
-							Share of Voice
+							言及シェア
 						</h2>
 						<Button asChild variant="ghost" size="sm" className="h-8">
 							<Link to="/app/$brand/share-of-voice" params={{ brand: brandId }}>
-								View Share of Voice <IconArrowRight className="h-4 w-4 ml-1" />
+								言及シェアを見る <IconArrowRight className="h-4 w-4 ml-1" />
 							</Link>
 						</Button>
 					</div>
@@ -431,8 +431,8 @@ function DashboardPage() {
 						<Card className="shadow-none lg:col-span-3 flex flex-col gap-3 py-4">
 							<CardHeader className="border-b border-dotted pb-2!">
 								<CardTitleWithTooltip
-									title="Share of Voice Trends (30d)"
-									tooltip="Your brand's share of all brand and competitor mentions across the AI answers to your prompts — the big number is the latest point on this line. It shifts as AI models change, as you and competitors publish, or as the sites AI scans move; the line is smoothed for staggered prompt schedules."
+									title="言及シェアトレンド (30日間)"
+									tooltip="AIがプロンプトに回答する際に言及した、自社と競合すべての言及数のうち自社が占める割合です — 大きく表示されている数字はこの折れ線の最新地点を示します。AIモデルの変化、自社/競合の新規コンテンツ公開、AIが参照するサイトの変動などにより変化します。プロンプトの実行タイミングのばらつきを均すため、折れ線は平滑化されています。"
 								/>
 							</CardHeader>
 							<CardContent className="flex-1 min-h-[100px]">
@@ -441,7 +441,7 @@ function DashboardPage() {
 								) : (
 									<TrendChart
 										data={(sovData?.shareTimeSeries ?? []).map((p) => ({ date: p.date, value: p.share }))}
-										label="Share of Voice"
+										label="言及シェア"
 										color="#2563eb"
 									/>
 								)}

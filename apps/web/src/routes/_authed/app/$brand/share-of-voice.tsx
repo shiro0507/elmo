@@ -29,7 +29,7 @@ export const Route = createFileRoute("/_authed/app/$brand/share-of-voice")({
 		const brandName = getBrandName(matches);
 		return {
 			meta: [
-				{ title: buildTitle("Share of Voice", { appName, brandName }) },
+				{ title: buildTitle("言及シェア", { appName, brandName }) },
 				{ name: "description", content: "See how often AI engines mention you versus your competitors." },
 			],
 		};
@@ -112,7 +112,7 @@ function ShareOfVoicePage() {
 				<div className="grid gap-6 lg:grid-cols-2">
 					<Card>
 						<CardHeader>
-							<CardTitle>Share of Voice</CardTitle>
+							<CardTitle>言及シェア</CardTitle>
 						</CardHeader>
 						<CardContent className="flex items-center justify-between gap-4">
 							<div>
@@ -130,12 +130,12 @@ function ShareOfVoicePage() {
 
 					<Card>
 						<CardHeader>
-							<CardTitle>Share of Voice Trends</CardTitle>
+							<CardTitle>言及シェアトレンド</CardTitle>
 						</CardHeader>
 						<CardContent>
 							<TrendChart
 								data={data.shareTimeSeries.map((p) => ({ date: p.date, value: p.share }))}
-								label="Share of Voice"
+								label="言及シェア"
 								color="#2563eb"
 								className="aspect-auto h-[180px] w-full"
 							/>
@@ -145,7 +145,7 @@ function ShareOfVoicePage() {
 
 				<Card>
 					<CardHeader>
-						<CardTitle>Share of Voice Leaderboard</CardTitle>
+						<CardTitle>言及シェアリーダーボード</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<Table>
@@ -208,7 +208,7 @@ function ShareOfVoicePage() {
 
 	return (
 		<PageHeader
-			title="Share of Voice"
+			title="言及シェア"
 			subtitle="How often AI engines mention you versus your competitors."
 			infoContent={infoContent}
 		>
