@@ -49,35 +49,35 @@ const OpportunitySchema = z.object({
 	category: z
 		.enum(CATEGORIES)
 		.describe(
-			"Which workstream this belongs to: creation (net-new content to publish or earn — comparisons, guides, 'best of' angles for topics the brand is absent on), existing-content (a page already getting cited that's slipping, or could win the mention with a refresh), outreach (earn a placement on a third-party site assistants cite — review platforms, editorial roundups), social (show up in the community conversations assistants pull from — Reddit, YouTube, forums).",
+			"どのワークストリームに属するか: creation(新規に公開・獲得すべきコンテンツ — 比較記事、ガイド、ブランドが手薄なトピックの「おすすめ◯選」)、existing-content(すでに引用されているが順位が落ちてきている、またはリフレッシュすれば言及を獲得できるページ)、outreach(アシスタントが引用するサードパーティサイトへの掲載を獲得する — レビューサイト、編集メディアのまとめ記事)、social(アシスタントが参照するコミュニティの会話に登場する — Reddit、YouTube、フォーラム)。",
 		),
 	title: z
 		.string()
 		.describe(
-			'Short, specific, action-oriented — name the concrete surface or angle, not a metric. e.g. "Get into PCMag\'s best-CRM roundup" or "Answer the recurring r/CRM \'which CRM\' threads".',
+			"具体的で行動につながる短い文言 — 抽象的な指標ではなく、具体的な媒体や切り口を名指しすること。例:「PCMagのベストCRMまとめ記事に掲載される」「r/CRMで繰り返される『どのCRMがいいか』スレッドに回答する」",
 		),
 	why: z
 		.string()
 		.describe(
-			"One or two tight sentences, in plain language a marketer who has never used this tool will understand, on WHY this is worth doing — the motivation and the payoff. You may include one concrete stat from the data if it strengthens the case (and say what it measures). Do NOT propose on-page specifics you can't verify — you cannot see page contents, so never say things like 'add an FAQ / schema / H2s'. Don't restate long page titles (the UI lists the cited pages).",
+			"1〜2文の簡潔な文章で、このツールを使ったことのないマーケターにも伝わる平易な言葉で、なぜこれをやる価値があるか(動機と見返り)を説明する。説得力を強めるため、データに基づく具体的な数値を1つ含めてもよい(その場合は何を計測した数値かを明記する)。検証できないページ内部の具体策(「FAQを追加」「schemaを追加」「見出しを追加」など)は絶対に提案しないこと。長いページタイトルをそのまま繰り返さないこと(引用ページ一覧はUI側に表示される)。",
 		),
 	relatedPrompts: z
 		.array(z.string())
-		.describe("The tracked prompts (verbatim, exactly as written in the data) this helps. May be empty."),
+		.describe("このopportunityが役立つ、トラッキング対象のプロンプト(データに書かれている通りの文言)。空でも良い。"),
 });
 
 export const opportunitiesSchema = z.object({
 	summary: z
 		.array(z.string())
 		.describe(
-			"3-5 bullets, ONE short sentence each (≈20 words max): where the brand is being out-cited by competitors, where AI sources its answers, and the through-line of the plan. Do NOT restate the brand's overall or per-platform visibility, and do NOT define what a metric means — the user already has dedicated Overview and Visibility pages for those.",
+			"3〜5個の箇条書き、それぞれ短い一文(20語程度まで): 競合に引用で負けている点、AIがどこから情報を得ているか、施策全体の一貫した流れ。ブランド全体・プラットフォーム別のvisibilityを繰り返したり、指標の定義をしたりしないこと — ユーザーはすでに専用のOverviewページとVisibilityページを持っている。",
 		),
 	opportunities: z
 		.array(OpportunitySchema)
-		.describe("8-12 prioritized opportunities spread across the categories the data supports, highest impact first."),
+		.describe("データが裏付けるカテゴリに分散させた、8〜12件の優先順位付けされた機会(インパクトが大きい順)。"),
 	risks: z
 		.array(z.string())
-		.describe("2-4 very concise caveats (one short sentence each): hard-to-win areas, or tactics to avoid."),
+		.describe("2〜4件の非常に簡潔な注意点(それぞれ短い一文): 攻略が難しい領域、または避けるべき施策。"),
 });
 
 /** Raw LLM output. The server enriches it before returning (see OpportunitiesReport). */
@@ -147,7 +147,11 @@ opportunityの「why」で数値を引用する際は、それが何を計測し
 - 手が届く費用であること: コンテンツマーケターが実行できる、低〜中コストの施策を優先してください — コンテンツ制作、既存のまとめ記事への掲載を編集者に働きかける、誠実なコミュニティ参加、通常のレビュー施策など。主な施策として、高額または専門的な取り組み(臨床/研究所レベルの試験、専門家の雇用、専門家によるAMA開催、大規模な有料スポンサーシップ、PRリテイナー契約など)を提案しないでください。
 - 検証可能であること: あなたはページの中身を見ることができないため、FAQの追加・構造化データ(schema)・見出し(headings)の追加など、ページ内部の具体的な変更は絶対に提案しないでください。検証できない内部の編集ではなく、存在感を獲得・創出することを提案してください。
 - データに基づき具体的であること: すべてのopportunityをブランドの実際のデータに紐づけ、具体的な面(実在するサイト、まとめ記事、コミュニティ、比較の切り口)を名指ししてください — 曖昧な「クエリクラスタ」のような表現は避けてください。競合がすでに引用されているがブランドはされていない面を優先してください。競合が所有するドメインは絶対に提案しないでください。
-- 「*」印が付いたクエリはブランド名を含む指名検索です。ブランド名を含まないカテゴリクエリこそが新規の可視性を獲得できる場なので、そちらの重みを高くしてください。`;
+- 「*」印が付いたクエリはブランド名を含む指名検索です。ブランド名を含まないカテゴリクエリこそが新規の可視性を獲得できる場なので、そちらの重みを高くしてください。
+
+用語の統一: 生成する文章(title・why・summary・risks)は、直訳調ではなく自然な日本語のマーケティング文書として書いてください。特に以下の言葉は指定の訳語で統一し、不自然な言い換えをしないこと:
+- "third-party" → 「サードパーティ」を使う(「第三者」は使わない)。
+- "editorial" → 「編集メディア」「メディア記事」など自然な言い方を使う(「編集系」「これらの編集」のような直訳・不自然な表現は避ける)。`;
 
 const TASK = `上記のデータのみを使用して、以下の構造化出力を返してください:
 - summary: 3〜5個の箇条書き、それぞれ短い一文で(競合との差、AIがどこから情報を得ているか、施策全体の一貫した流れ)。全体/プラットフォーム別のvisibilityの繰り返しや、指標の定義はしないでください。
