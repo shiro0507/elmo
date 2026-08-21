@@ -49,9 +49,9 @@ function currentShareOf(series: Array<{ share: number | null }>): number | null 
 }
 
 const TIPS = {
-	mentions: "Number of runs in which this brand was mentioned in the AI answer.",
-	share: "This brand's share of all brand + competitor mentions.",
-	prompts: "Number of distinct prompts this brand appeared in.",
+	mentions: "プロンプト実行のうち、ブランドが言及された回数の合計",
+	share: "自社及び競合のシェア状況",
+	prompts: "ブランドが1回以上言及されたプロンプトの数",
 };
 
 function ShareOfVoicePage() {
@@ -70,9 +70,9 @@ function ShareOfVoicePage() {
 	const infoContent = (
 		<>
 			<p className="mb-2">
-				言及シェアとは、プロンプトへのAIの回答の中で、各ブランドがどのくらいの頻度で言及されているかを示す指標です。言及は実行(ラン)単位でカウントされるため、自社と競合の数値は同じ単位で直接比較できます。
+				言及シェアとは、プロンプトに対するAIの回答の中で、各ブランドがどのくらいの頻度で言及されているかを示す指標です。言及はプロンプトの実行単位でカウントされるため、自社と競合の数値は同じ単位で直接比較できます。
 			</p>
-			<p>競合は設定画面で追跡しているブランドです。モデルフィルターを切り替えれば、エンジンごとの比較もできます。</p>
+			<p>競合は設定画面で登録しているブランドです。モデルフィルターを切り替えれば、エンジンごとの比較もできます。</p>
 		</>
 	);
 
@@ -119,8 +119,8 @@ function ShareOfVoicePage() {
 									{currentShare !== null ? `${currentShare}%` : "—"}
 								</div>
 								<p className="text-sm text-muted-foreground mt-1 max-w-[18rem]">
-									{data.brandName} across {data.totalRuns.toLocaleString()} runs
-									{data.entries.length > 1 ? ` and ${data.entries.length - 1} competitors` : ""}.
+									 {data.totalRuns.toLocaleString()} 回のプロンプト実行.
+									{data.brandName} と {data.entries.length > 1 ? ` ${data.entries.length - 1} 競合の状況` : ""}.
 								</p>
 							</div>
 							<ShareOfVoiceDonut entries={data.entries} />
@@ -129,7 +129,7 @@ function ShareOfVoicePage() {
 
 					<Card>
 						<CardHeader>
-							<CardTitle>言及シェアトレンド</CardTitle>
+							<CardTitle>言及シェア推移</CardTitle>
 						</CardHeader>
 						<CardContent>
 							<TrendChart
@@ -144,7 +144,7 @@ function ShareOfVoicePage() {
 
 				<Card>
 					<CardHeader>
-						<CardTitle>言及シェアリーダーボード</CardTitle>
+						<CardTitle>直近の実行における言及シェア</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<Table>
