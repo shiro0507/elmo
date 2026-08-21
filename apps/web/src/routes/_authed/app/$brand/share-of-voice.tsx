@@ -119,8 +119,8 @@ function ShareOfVoicePage() {
 									{currentShare !== null ? `${currentShare}%` : "—"}
 								</div>
 								<p className="text-sm text-muted-foreground mt-1 max-w-[18rem]">
-									 {data.totalRuns.toLocaleString()} 回のプロンプト実行.
-									{data.brandName} と {data.entries.length > 1 ? ` ${data.entries.length - 1} 競合の状況` : ""}.
+									 {data.totalRuns.toLocaleString()}回プロンプト実行し、
+									{data.brandName}及び{data.entries.length > 1 ? ` ${data.entries.length - 1}つの競合を集計` : ""}。
 								</p>
 							</div>
 							<ShareOfVoiceDonut entries={data.entries} />

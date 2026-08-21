@@ -242,7 +242,7 @@ function DashboardPage() {
 							<Card className="shadow-none lg:col-span-3 flex flex-col gap-3 py-4">
 								<CardHeader className="border-b border-dotted pb-2!">
 									<CardTitle className="text-sm font-medium flex items-center gap-1.5 text-muted-foreground">
-										言及シェアトレンド (30日間)
+										言及シェア推移 (30日間)
 										<IconInfoCircle className="h-3.5 w-3.5 opacity-70" />
 									</CardTitle>
 								</CardHeader>
@@ -431,7 +431,7 @@ function DashboardPage() {
 						<Card className="shadow-none lg:col-span-3 flex flex-col gap-3 py-4">
 							<CardHeader className="border-b border-dotted pb-2!">
 								<CardTitleWithTooltip
-									title="言及シェアトレンド (30日間)"
+									title="言及シェア推移 (30日間)"
 									tooltip="AIがプロンプトに回答する際に言及した、自社と競合すべての言及数のうち自社が占める割合です — 大きく表示されている数字はこの折れ線の最新地点を示します。AIモデルの変化、自社/競合の新規コンテンツ公開、AIが参照するサイトの変動などにより変化します。プロンプトの実行タイミングのばらつきを均すため、折れ線は平滑化されています。"
 								/>
 							</CardHeader>
