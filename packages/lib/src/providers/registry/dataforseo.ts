@@ -137,30 +137,53 @@ async function runGoogleAiOverview(prompt: string): Promise<ScrapeResult> {
 	// Loading the AI Overview asynchronously intermittently fails on DataForSEO's
 	// side with a task-level "Internal SE Server Error"; a couple of retries clear
 	// it, so a transient blip doesn't fail the run (matches the BrightData AI
-	// Overview runner).
+	// Overview runner). A task that succeeds but simply has no ai_overview item
+	// means Google didn't show one for this query — that's a real (if empty)
+	// result, not an error, so it's never worth retrying or failing the run over.
 	let lastError = "No response or tasks.";
+	let lastNoOverviewResponse: unknown = null;
 	for (let attempt = 0; attempt < 3; attempt++) {
 		try {
 			const response = await api.googleOrganicLiveAdvanced([requestInfo]);
 			const task = response?.tasks?.[0];
 			if (task?.status_code === 20000 && task.result?.length) {
-				// The SERP response carries the AI Overview as an items[].type
-				// "ai_overview" element, which the shared Google extractors understand.
-				const citations = extractCitationsFromGoogle(response);
-				return {
-					rawOutput: sanitizeForJson(response),
-					webQueries: citations.length > 0 ? [WEB_QUERIES_UNAVAILABLE] : [],
-					textContent: extractTextFromGoogle(response),
-					citations,
-					modelVersion: "dataforseo",
-				};
+				const items = task.result[0]?.items ?? [];
+				const hasAiOverview = items.some((item: any) => item?.type === "ai_overview");
+				if (hasAiOverview) {
+					// The SERP response carries the AI Overview as an items[].type
+					// "ai_overview" element, which the shared Google extractors understand.
+					const citations = extractCitationsFromGoogle(response);
+					return {
+						rawOutput: sanitizeForJson(response),
+						webQueries: citations.length > 0 ? [WEB_QUERIES_UNAVAILABLE] : [],
+						textContent: extractTextFromGoogle(response),
+						citations,
+						modelVersion: "dataforseo",
+					};
+				}
+				lastNoOverviewResponse = response;
+				lastError = "Task succeeded with no AI overview in the results.";
+			} else {
+				lastError = task ? `${task.status_code} ${task.status_message}` : "No response or tasks.";
 			}
-			lastError = task ? `${task.status_code} ${task.status_message}` : "No response or tasks.";
 		} catch (error) {
 			lastError = error instanceof Error ? error.message : String(error);
 		}
 		if (attempt < 2) await new Promise((resolve) => setTimeout(resolve, 1500 * (attempt + 1)));
 	}
+
+	// Every attempt that returned a task at all succeeded with no AI overview —
+	// report it as a normal empty result instead of failing the run.
+	if (lastNoOverviewResponse) {
+		return {
+			rawOutput: sanitizeForJson(lastNoOverviewResponse),
+			webQueries: [],
+			textContent: "No AI overview content found.",
+			citations: [],
+			modelVersion: "dataforseo",
+		};
+	}
+
 	throw new Error(`DataForSEO API Error: ${lastError}`);
 }
 
