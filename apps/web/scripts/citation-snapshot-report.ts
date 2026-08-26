@@ -13,7 +13,7 @@
  *                                branded/unbranded, the full AI response
  *                                text, the cited url/domain/category, and
  *                                (if --products is given) an any_product_mentioned
- *                                summary column plus one ○/blank column per
+ *                                summary column plus one 1/0 column per
  *                                product name — a case-insensitive substring
  *                                match against the response text, same
  *                                convention as the brand/competitor mention
@@ -179,8 +179,8 @@ async function main() {
 		const run = runById.get(c.promptRunId);
 		const responseText = run ? extractTextContent(run.rawOutput, run.provider ?? run.model) : "(run not found)";
 		const responseTextLower = responseText.toLowerCase();
-		const productFlags = productNames.map((name) => (responseTextLower.includes(name.toLowerCase()) ? "○" : ""));
-		const anyProductMentioned = productFlags.some((f) => f === "○") ? "○" : "";
+		const productFlags = productNames.map((name) => (responseTextLower.includes(name.toLowerCase()) ? 1 : 0));
+		const anyProductMentioned = productFlags.some((f) => f === 1) ? 1 : 0;
 		mentionRows.push([
 			prompt.value,
 			topicalTags.join(", "),
