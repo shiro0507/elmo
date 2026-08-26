@@ -180,7 +180,7 @@ async function main() {
 		const responseText = run ? extractTextContent(run.rawOutput, run.provider ?? run.model) : "(run not found)";
 		const responseTextLower = responseText.toLowerCase();
 		const productFlags = productNames.map((name) => (responseTextLower.includes(name.toLowerCase()) ? 1 : 0));
-		const anyProductMentioned = productFlags.some((f) => f === 1) ? 1 : 0;
+		const anyProductMentioned = productFlags.some((f) => f === 1) ? "有" : "無";
 		mentionRows.push([
 			prompt.value,
 			topicalTags.join(", "),
