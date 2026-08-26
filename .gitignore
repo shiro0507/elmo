@@ -84,3 +84,6 @@ apps/web/storybook-static/
 .claude/settings.local.json
 .claude/worktrees/
 .readonlydb
+
+# local scripts with hardcoded credentials — never commit
+apps/web/scripts/citation-snapshot-report.local.sh

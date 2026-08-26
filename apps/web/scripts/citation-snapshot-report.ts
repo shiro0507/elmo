@@ -11,31 +11,37 @@
  *   c) citations_branded      — same as (b), for branded prompts.
  *   d) mentions               — one row per citation: keyword, tags,
  *                                branded/unbranded, the full AI response
- *                                text, and the cited url/domain/category.
+ *                                text, the cited url/domain/category, and
+ *                                (if --products is given) an any_product_mentioned
+ *                                summary column plus one ○/blank column per
+ *                                product name — a case-insensitive substring
+ *                                match against the response text, same
+ *                                convention as the brand/competitor mention
+ *                                detection elsewhere in the app.
  *                                Raw/unaggregated, for pivoting in Excel.
- *                                TODO: per-product mention columns (e.g. a
- *                                specific product line, not just the
- *                                registered brand/competitor names) aren't
- *                                tracked anywhere — add a product-name list
- *                                + text search over `response` here if/when
- *                                needed. Search-volume (e.g. from Rakko) is
- *                                also not joined — low priority per 2026-08-25.
+ *                                TODO: search-volume (e.g. from Rakko) is
+ *                                not joined — low priority per 2026-08-25.
  *
  * Domain categorization reuses the exact production logic (curated lists +
  * the domain_categories LLM-classification cache) via categorizeDomainsCached
  * — no separate/duplicated classification rules. Response-text extraction
  * reuses extractTextContent (same dispatcher the prompt-detail page uses).
  *
+ * --products points to a plain text file, one product name per line (blank
+ * lines ignored); the mentions CSV gets one extra column per line, in the
+ * same order, so a company's product lineup can just be a flat list — no
+ * parent-brand grouping needed for the text search itself.
+ *
  * Usage (must run with cwd = apps/web so tsx picks up its tsconfig paths):
  *   cd apps/web
  *   DATABASE_URL="postgresql://..." pnpm tsx scripts/citation-snapshot-report.ts --brand=brand-4 --date=2026-08-24
- *   DATABASE_URL="postgresql://..." pnpm tsx scripts/citation-snapshot-report.ts --brand=brand-4 --date=2026-08-24 --out=../../reports
+ *   DATABASE_URL="postgresql://..." pnpm tsx scripts/citation-snapshot-report.ts --brand=brand-4 --date=2026-08-24 --out=../../reports --products=scripts/product-names.txt
  *
  * --date is a UTC calendar day boundary (00:00:00 to 23:59:59 UTC), same
  * convention as the earlier one-off SQL exports for this project.
  */
 import { parseArgs } from "node:util";
-import { writeFileSync, mkdirSync } from "node:fs";
+import { writeFileSync, mkdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { and, eq, gte, inArray, lt } from "drizzle-orm";
@@ -50,6 +56,7 @@ const { values } = parseArgs({
 		brand: { type: "string" },
 		date: { type: "string" },
 		out: { type: "string", default: "." },
+		products: { type: "string" },
 	},
 });
 
@@ -66,6 +73,13 @@ const brandId = values.brand;
 const dateStr = values.date;
 const outDir = resolve(process.cwd(), values.out ?? ".");
 mkdirSync(outDir, { recursive: true });
+
+const productNames = values.products
+	? readFileSync(resolve(process.cwd(), values.products), "utf-8")
+			.split("\n")
+			.map((line) => line.trim())
+			.filter(Boolean)
+	: [];
 
 const db = drizzle(process.env.DATABASE_URL);
 
@@ -164,6 +178,9 @@ async function main() {
 
 		const run = runById.get(c.promptRunId);
 		const responseText = run ? extractTextContent(run.rawOutput, run.provider ?? run.model) : "(run not found)";
+		const responseTextLower = responseText.toLowerCase();
+		const productFlags = productNames.map((name) => (responseTextLower.includes(name.toLowerCase()) ? "○" : ""));
+		const anyProductMentioned = productFlags.some((f) => f === "○") ? "○" : "";
 		mentionRows.push([
 			prompt.value,
 			topicalTags.join(", "),
@@ -173,6 +190,8 @@ async function main() {
 			c.url,
 			c.domain,
 			category,
+			...(productNames.length > 0 ? [anyProductMentioned] : []),
+			...productFlags,
 		]);
 	}
 
@@ -196,7 +215,18 @@ async function main() {
 	);
 	writeCsv(
 		resolve(outDir, `mentions_${suffix}.csv`),
-		["keyword", "tags", "branded_unbranded", "model", "response", "url", "domain", "category"],
+		[
+			"keyword",
+			"tags",
+			"branded_unbranded",
+			"model",
+			"response",
+			"url",
+			"domain",
+			"category",
+			...(productNames.length > 0 ? ["any_product_mentioned"] : []),
+			...productNames,
+		],
 		mentionRows,
 	);
 }
