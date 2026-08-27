@@ -60,8 +60,8 @@ export const Route = createFileRoute("/_authed/app/$brand/settings/prompts")({
 		const brandName = getBrandName(matches);
 		return {
 			meta: [
-				{ title: buildTitle("Prompts", { appName, brandName }) },
-				{ name: "description", content: "Add, edit, or remove tracked prompts." },
+				{ title: buildTitle("プロンプト", { appName, brandName }) },
+				{ name: "description", content: "トラッキングを行うプロンプトを編集できます。" },
 			],
 		};
 	},

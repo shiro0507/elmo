@@ -36,10 +36,9 @@ function LlmsSettingsPage() {
 	return (
 		<div className="space-y-6 max-w-6xl">
 			<div>
-				<h1 className="text-3xl font-bold">LLMs</h1>
+				<h1 className="text-3xl font-bold">LLM</h1>
 				<p className="text-muted-foreground">
-					Your prompts are evaluated against these AI models to track how your brand appears across different types of
-					AI search.
+					以下の各AI検索で、設定したプロンプトによって自社がどのように表示されるかをトラッキングします。　
 				</p>
 			</div>
 

@@ -25,8 +25,8 @@ export const Route = createFileRoute("/_authed/app/$brand/settings/brand")({
 		const brandName = getBrandName(matches);
 		return {
 			meta: [
-				{ title: buildTitle("Brand Settings", { appName, brandName }) },
-				{ name: "description", content: "Manage your brand name and website." },
+				{ title: buildTitle("自社に関する設定", { appName, brandName }) },
+				{ name: "description", content: "自社名とウェブサイトの設定を行います。" },
 			],
 		};
 	},
@@ -113,19 +113,19 @@ function BrandSettingsPage() {
 	return (
 		<div className="space-y-6 max-w-2xl">
 			<div>
-				<h1 className="text-3xl font-bold">Brand</h1>
-				<p className="text-muted-foreground">Manage your brand name and website</p>
+				<h1 className="text-3xl font-bold">自社に関する設定</h1>
+				<p className="text-muted-foreground">自社名とウェブサイトの設定を行います。</p>
 			</div>
 
 			<form action={handleSubmit} className="space-y-6">
 				<div className="space-y-4">
 					<div className="space-y-2">
-						<Label htmlFor="name">Brand Name</Label>
+						<Label htmlFor="name">自社名</Label>
 						<Input
 							id="name"
 							name="name"
 							type="text"
-							placeholder="Brand Name"
+							placeholder="自社名"
 							defaultValue={brand.name}
 							required
 							disabled={isSubmitting}
@@ -134,7 +134,7 @@ function BrandSettingsPage() {
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="website">Website</Label>
+						<Label htmlFor="website">ウェブサイト</Label>
 						<Input
 							id="website"
 							name="website"
@@ -149,7 +149,7 @@ function BrandSettingsPage() {
 
 					<div className="space-y-2">
 						<Label className="flex items-center gap-1.5">
-							Additional Domains
+							追加ドメイン
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<IconInfoCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
@@ -174,7 +174,7 @@ function BrandSettingsPage() {
 
 					<div className="space-y-2">
 						<Label className="flex items-center gap-1.5">
-							Brand Aliases
+							自社ブランドの別名、商品名など
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<IconInfoCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />

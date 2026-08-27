@@ -109,8 +109,8 @@ function CompetitorsSettingsPage() {
 	return (
 		<div className="space-y-6 max-w-2xl">
 			<div>
-				<h1 className="text-3xl font-bold">Competitors</h1>
-				<p className="text-muted-foreground">Manage your competitive landscape for reputation tracking.</p>
+				<h1 className="text-3xl font-bold">競合</h1>
+				<p className="text-muted-foreground">AI検索でトラッキングしたい競合他社の設定をします。</p>
 			</div>
 
 			<Alert variant="default" className="border-yellow-200 bg-yellow-50 text-yellow-800">

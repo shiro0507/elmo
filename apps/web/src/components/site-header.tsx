@@ -18,12 +18,12 @@ const PAGE_NAMES: Record<string, string> = {
 	visibility: "AI言及率",
 	"share-of-voice": "言及シェア",
 	"query-fan-out": "Query Fan-Out",
-	opportunities: "Opportunities",
-	prompts: "Prompts",
-	citations: "Citations",
-	brand: "Brand",
-	competitors: "Competitors",
-	llms: "LLMs",
+	opportunities: "解析結果",
+	prompts: "プロンプト",
+	citations: "引用",
+	brand: "自社",
+	competitors: "競合",
+	llms: "LLM",
 	workflows: "Workflows",
 	tools: "Tools",
 };
@@ -129,7 +129,7 @@ function BrandBreadcrumbs({
 	const isSettingsSubPage = pageSegment === "settings" && subSegment;
 
 	// Determine page name
-	const pageName = pageSegment ? getPageDisplayName(pageSegment) : "Overview";
+	const pageName = pageSegment ? getPageDisplayName(pageSegment) : "概要";
 
 	return (
 		<>
@@ -160,13 +160,13 @@ function BrandBreadcrumbs({
 					</BreadcrumbItem>
 					<BreadcrumbSeparator className="hidden md:block" />
 					<BreadcrumbItem>
-						<BreadcrumbPage>Prompt History</BreadcrumbPage>
+						<BreadcrumbPage>プロンプト履歴</BreadcrumbPage>
 					</BreadcrumbItem>
 				</>
 			) : isSettingsSubPage ? (
 				<>
 					<BreadcrumbItem className="hidden md:block">
-						<span className="text-muted-foreground">Settings</span>
+						<span className="text-muted-foreground">設定</span>
 					</BreadcrumbItem>
 					<BreadcrumbSeparator className="hidden md:block" />
 					<BreadcrumbItem>
