@@ -45,11 +45,11 @@ export const Route = createFileRoute("/_authed/app/$brand/query-fan-out")({
 		const brandName = getBrandName(matches);
 		return {
 			meta: [
-				{ title: buildTitle("Query Fan-Out", { appName, brandName }) },
+				{ title: buildTitle("クエリ展開", { appName, brandName }) },
 				{
 					name: "description",
 					content:
-						"See the web searches AI engines run when answering your prompts, and how they rewrite your wording.",
+						"AIエンジンが回答を生成するときに裏側で走らせる検索クエリを分析できます。",
 				},
 			],
 		};
@@ -140,8 +140,8 @@ function QueryFanoutPage() {
 
 	return (
 		<PageHeader
-			title="Query Fan-Out"
-			subtitle="The web searches AI engines run when answering your prompts."
+			title="クエリ展開"
+			subtitle="AIエンジンが回答を生成するときに裏側で走らせる検索クエリを分析できます。"
 			infoContent={infoContent}
 		>
 			<FilterSection>

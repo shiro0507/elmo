@@ -17,7 +17,7 @@ import { Link } from "@tanstack/react-router";
 const PAGE_NAMES: Record<string, string> = {
 	visibility: "AI言及率",
 	"share-of-voice": "言及シェア",
-	"query-fan-out": "Query Fan-Out",
+	"query-fan-out": "クエリ展開",
 	opportunities: "解析結果",
 	prompts: "プロンプト",
 	citations: "引用",

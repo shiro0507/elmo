@@ -85,7 +85,7 @@ export function AppSidebar({
 					icon: IconSpeakerphone,
 				},
 				{
-					title: "Query Fan-Out",
+					title: "クエリ展開",
 					url: "/query-fan-out",
 					icon: IconSitemap,
 				},
