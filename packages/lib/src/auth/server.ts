@@ -9,6 +9,7 @@
 import { type SSOOptions, sso } from "@better-auth/sso";
 import { type BetterAuthOptions, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { hashPassword } from "better-auth/crypto";
 import { admin, customSession, organization } from "better-auth/plugins";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { db } from "../db/db";
@@ -130,3 +131,11 @@ export function createAuth(options?: CreateAuthOptions) {
 }
 
 export type Auth = ReturnType<typeof createAuth>;
+
+/**
+ * Hash a plaintext password with Better Auth's own scheme, for scripts that
+ * insert `account` rows directly (bypassing the signup API/hooks — e.g.
+ * local mode's one-user-only databaseHooks guard). Re-exported here so
+ * callers depend only on @workspace/lib, never on better-auth directly.
+ */
+export const hashUserPassword = hashPassword;
