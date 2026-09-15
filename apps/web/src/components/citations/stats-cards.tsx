@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@workspace/ui/components/tooltip";
 import { IconInfoCircle } from "@tabler/icons-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components/tooltip";
 
 function StatCard({ title, tooltip, value }: { title: string; tooltip: React.ReactNode; value: React.ReactNode }) {
 	return (
@@ -27,13 +27,19 @@ export function CitationStatsCards({
 	brandShare,
 	uniqueDomains,
 	totalCitations,
+	concentration,
 }: {
 	brandShare: number;
 	uniqueDomains: number;
 	totalCitations: number;
+	/** HHI-style concentration (0–1) of this citation set. Undefined when
+	 *  there are no citations (shouldn't happen here since the parent only
+	 *  renders this card when totalCitations > 0, but kept optional to avoid
+	 *  a NaN display if that ever changes). */
+	concentration?: number;
 }) {
 	return (
-		<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+		<div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
 			<StatCard
 				title="ブランド引用シェア"
 				tooltip="全引用のうち、あなたのブランドのドメインへリンクしている割合です。高いほど、AIモデルがあなたのコンテンツを参照しやすいことを意味します。"
@@ -54,6 +60,13 @@ export function CitationStatsCards({
 				tooltip="全プロンプト評価にわたって、AIモデルが引用した外部ウェブサイトの総数です。"
 				value={totalCitations.toLocaleString()}
 			/>
+			{concentration != null && (
+				<StatCard
+					title="出典の集中度"
+					tooltip="引用ドメインの偏りを示すハーフィンダール指数(0〜100)。数値が高いほど少数のドメインに引用が集中しており、他の情報源が薄い「空白」の可能性を示します。"
+					value={`${Math.round(concentration * 100)}`}
+				/>
+			)}
 		</div>
 	);
 }

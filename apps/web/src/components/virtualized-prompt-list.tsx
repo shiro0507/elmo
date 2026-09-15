@@ -1,7 +1,7 @@
-import { memo, useRef, useMemo, useState, useCallback, useLayoutEffect, useEffect } from "react";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
-import { CachedPromptChart } from "./cached-prompt-chart";
+import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { LookbackPeriod } from "@/hooks/use-prompt-chart-data";
+import { CachedPromptChart } from "./cached-prompt-chart";
 
 interface PromptItem {
 	id: string;
@@ -9,6 +9,7 @@ interface PromptItem {
 	// All-time first evaluation date (null if never evaluated)
 	// Note: Date objects are serialized to strings in JSON responses
 	firstEvaluatedAt?: Date | string | null;
+	citationConcentration?: { uniqueDomains: number; maxShareRatio: number; hhi: number } | null;
 }
 
 interface VirtualizedPromptListProps {
@@ -110,6 +111,7 @@ export const VirtualizedPromptList = memo(function VirtualizedPromptList({
 									availableModels={availableModels}
 									searchHighlight={searchHighlight}
 									hasEverBeenEvaluated={Boolean(prompt.firstEvaluatedAt)}
+									citationConcentration={prompt.citationConcentration}
 								/>
 							</div>
 						</div>

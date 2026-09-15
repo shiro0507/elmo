@@ -12,6 +12,8 @@ export const PROMPT_ORDER_OPTIONS = [
 	{ value: "brand-asc", label: "自社の言及率 ↑" },
 	{ value: "competitor-desc", label: "競合の言及率 ↓" },
 	{ value: "competitor-asc", label: "競合の言及率 ↑" },
+	{ value: "concentration-desc", label: "出典の集中度 ↓" },
+	{ value: "concentration-asc", label: "出典の集中度 ↑" },
 	{ value: "prompt-asc", label: "プロンプト A–Z" },
 	{ value: "prompt-desc", label: "プロンプト Z–A" },
 ] as const;
@@ -33,6 +35,23 @@ export interface OrderablePrompt {
 	brandMentionRate: number;
 	competitorMentionRate: number;
 	averageWeightedMentions: number;
+	/** HHI-style citation concentration (0–1, higher = fewer/more-dominant
+	 *  cited domains — a candidate content gap). Null when the prompt has no
+	 *  citations in the selected window. */
+	citationConcentration: { hhi: number } | null;
+}
+
+/** Prompts with no citations in the window (null concentration) always sort
+ *  after every prompt that has a score, in both directions — there's nothing
+ *  to rank them by, so mixing them into the numeric order would be
+ *  meaningless rather than just "low". */
+function byConcentration<T extends OrderablePrompt>(a: T, b: T, direction: "asc" | "desc"): number {
+	const ah = a.citationConcentration?.hhi;
+	const bh = b.citationConcentration?.hhi;
+	if (ah == null && bh == null) return 0;
+	if (ah == null) return 1;
+	if (bh == null) return -1;
+	return direction === "desc" ? bh - ah : ah - bh;
 }
 
 /** Re-order a list of prompt summaries. `default` returns the input untouched
@@ -64,6 +83,12 @@ export function orderPrompts<T extends OrderablePrompt>(prompts: T[], order: Pro
 			break;
 		case "competitor-asc":
 			sorted.sort((a, b) => a.competitorMentionRate - b.competitorMentionRate || byValue(a, b));
+			break;
+		case "concentration-desc":
+			sorted.sort((a, b) => byConcentration(a, b, "desc") || byValue(a, b));
+			break;
+		case "concentration-asc":
+			sorted.sort((a, b) => byConcentration(a, b, "asc") || byValue(a, b));
 			break;
 		case "prompt-asc":
 			sorted.sort(byValue);

@@ -1,15 +1,17 @@
-import { memo, useMemo, useCallback } from "react";
+import { Badge } from "@workspace/ui/components/badge";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@workspace/ui/components/card";
 import { Separator } from "@workspace/ui/components/separator";
-import { Badge } from "@workspace/ui/components/badge";
 import { Skeleton } from "@workspace/ui/components/skeleton";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components/tooltip";
+import { memo, useCallback, useMemo } from "react";
+import { useOptionalChartDataContext } from "@/contexts/chart-data-context";
+import { useChartExport } from "@/hooks/use-chart-export";
+import type { LookbackPeriod } from "@/hooks/use-prompt-chart-data";
+import { getBadgeClassName, getBadgeVariant } from "@/lib/chart-utils";
+import { concentrationLevel } from "@/lib/citation-concentration";
 import { BaseChart } from "./base-chart";
 import { ChartActionsFooter } from "./chart-actions-footer";
 import { TextHighlighter } from "./text-highlighter";
-import { useChartExport } from "@/hooks/use-chart-export";
-import { useOptionalChartDataContext } from "@/contexts/chart-data-context";
-import type { LookbackPeriod } from "@/hooks/use-prompt-chart-data";
-import { getBadgeVariant, getBadgeClassName } from "@/lib/chart-utils";
 
 const PLACEHOLDER_BARS_NO_DATA = [20, 35, 15, 45, 25, 40, 30, 50, 20, 35, 45, 28].map((h, i) => ({
 	key: String(i),
@@ -42,6 +44,9 @@ export interface CachedPromptChartProps {
 	// Whether this prompt has ever been evaluated (all-time)
 	// Used to distinguish "never evaluated" vs "no data in selected window"
 	hasEverBeenEvaluated?: boolean;
+	/** Citation domain concentration for this prompt in the selected window —
+	 *  null when it has no citations yet. See 空白の判定基準.md metric ①. */
+	citationConcentration?: { uniqueDomains: number; maxShareRatio: number; hhi: number } | null;
 }
 
 // Memoized: when a sibling filter / react-query state change re-renders
@@ -56,6 +61,7 @@ export const CachedPromptChart = memo(function CachedPromptChart({
 	availableModels = [],
 	searchHighlight = "",
 	hasEverBeenEvaluated = false,
+	citationConcentration = null,
 }: CachedPromptChartProps) {
 	// Get data from context (pre-loaded)
 	const chartContext = useOptionalChartDataContext();
@@ -182,6 +188,21 @@ export const CachedPromptChart = memo(function CachedPromptChart({
 				<Card className="py-3 gap-3">
 					<CardHeader className="flex justify-between items-center px-3">
 						<PromptTitle name={promptName} highlight={searchHighlight} />
+						{citationConcentration && (
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<Badge variant="outline" className="cursor-help">
+										出典の集中度 {concentrationLevel(citationConcentration.hhi)}
+									</Badge>
+								</TooltipTrigger>
+								<TooltipContent className="max-w-xs text-sm">
+									引用ドメイン数: {citationConcentration.uniqueDomains} / 最多ドメインのシェア:{" "}
+									{Math.round(citationConcentration.maxShareRatio * 100)}%
+									<br />
+									集中度が高いほど、少数のサイトしか回答していない「空白」の可能性があります。
+								</TooltipContent>
+							</Tooltip>
+						)}
 					</CardHeader>
 					<Separator className="py-0 my-0" />
 					<CardContent className="px-3">
@@ -227,11 +248,28 @@ export const CachedPromptChart = memo(function CachedPromptChart({
 			<Card className="py-3 gap-3">
 				<CardHeader className="flex justify-between items-center px-3">
 					<PromptTitle name={promptName} highlight={searchHighlight} />
-					{lastBrandVisibility !== null && (
-						<Badge variant={getBadgeVariant(lastBrandVisibility)} className={getBadgeClassName(lastBrandVisibility)}>
-							AI言及率 {lastBrandVisibility}% 
-						</Badge>
-					)}
+					<div className="flex items-center gap-1.5">
+						{citationConcentration && (
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<Badge variant="outline" className="cursor-help">
+										出典の集中度 {concentrationLevel(citationConcentration.hhi)}
+									</Badge>
+								</TooltipTrigger>
+								<TooltipContent className="max-w-xs text-sm">
+									引用ドメイン数: {citationConcentration.uniqueDomains} / 最多ドメインのシェア:{" "}
+									{Math.round(citationConcentration.maxShareRatio * 100)}%
+									<br />
+									集中度が高いほど、少数のサイトしか回答していない「空白」の可能性があります。
+								</TooltipContent>
+							</Tooltip>
+						)}
+						{lastBrandVisibility !== null && (
+							<Badge variant={getBadgeVariant(lastBrandVisibility)} className={getBadgeClassName(lastBrandVisibility)}>
+								AI言及率 {lastBrandVisibility}%
+							</Badge>
+						)}
+					</div>
 				</CardHeader>
 				<Separator className="py-0 my-0" />
 				<CardContent className="pl-0 pr-6">

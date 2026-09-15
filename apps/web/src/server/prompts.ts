@@ -3,35 +3,37 @@
  * Replaces apps/web/src/app/api/prompts/* and brands/[id]/prompts-summary API routes.
  */
 import { createServerFn } from "@tanstack/react-start";
+import { db } from "@workspace/lib/db/db";
+import { brands, competitors, promptRuns, prompts, SYSTEM_TAGS } from "@workspace/lib/db/schema";
+import { computeSystemTags, getEffectiveBrandedStatus } from "@workspace/lib/tag-utils";
+import { and, count, desc, eq, gte, sql } from "drizzle-orm";
 import { z } from "zod";
 import { requireAuthSession, requireOrgAccess } from "@/lib/auth/helpers";
-import { db } from "@workspace/lib/db/db";
-import { prompts, promptRuns, brands, competitors, SYSTEM_TAGS } from "@workspace/lib/db/schema";
-import { eq, and, desc, gte, count, sql } from "drizzle-orm";
-import {
-	getPromptsSummary,
-	getPromptsFirstEvaluatedAt,
-	getPromptCitationUrlStats,
-	getPromptDailyStats,
-	getPromptCompetitorDailyStats,
-	getPromptWebQueriesForMapping,
-	getPromptWebQueryCounts,
-} from "@/lib/postgres-read";
-import { generateDateRange } from "@/lib/chart-utils";
 import type { LookbackPeriod } from "@/lib/chart-utils";
-import { getEffectiveBrandedStatus, computeSystemTags } from "@workspace/lib/tag-utils";
-import { createMultiplePromptJobSchedulers } from "@/lib/job-scheduler";
+import { generateDateRange } from "@/lib/chart-utils";
+import { computeCitationConcentration } from "@/lib/citation-concentration";
 import {
-	extractDomain,
-	normalizeUrl,
+	CITATION_PAGE_TYPES,
 	emptyCategoryCounts,
 	emptyPageTypeCounts,
-	resolvePageType,
+	extractDomain,
 	isGoogleSurfaceUrl,
-	CITATION_PAGE_TYPES,
+	normalizeUrl,
+	resolvePageType,
 } from "@/lib/domain-categories";
 import { classifyUrl } from "@/lib/domain-categories.server";
 import { buildGoogleModule } from "@/lib/google-module";
+import { createMultiplePromptJobSchedulers } from "@/lib/job-scheduler";
+import {
+	getPromptCitationUrlStats,
+	getPromptCompetitorDailyStats,
+	getPromptDailyStats,
+	getPromptsCitationDomainCounts,
+	getPromptsFirstEvaluatedAt,
+	getPromptsSummary,
+	getPromptWebQueriesForMapping,
+	getPromptWebQueryCounts,
+} from "@/lib/postgres-read";
 // Server Functions
 // ============================================================================
 
@@ -146,14 +148,25 @@ export const getPromptsSummaryFn = createServerFn({ method: "GET" })
 		// Parse webSearchEnabled
 		const webSearchEnabled = data.webSearchEnabled != null ? data.webSearchEnabled === "true" : undefined;
 
-		const [summaryData, firstEvaluatedData] = await Promise.all([
+		const [summaryData, firstEvaluatedData, citationDomainCounts] = await Promise.all([
 			getPromptsSummary(data.brandId, fromDateStr, toDateStr, timezone, webSearchEnabled, data.model, promptIds),
 			getPromptsFirstEvaluatedAt(data.brandId, promptIds),
+			getPromptsCitationDomainCounts(data.brandId, fromDateStr, toDateStr, timezone, promptIds, data.model),
 		]);
 
 		// Build prompt summaries
 		const summaryMap = new Map(summaryData.map((s) => [s.prompt_id, s]));
 		const firstEvalMap = new Map(firstEvaluatedData.map((f) => [f.prompt_id, f.first_evaluated_at]));
+
+		// Group citation domain counts per prompt so each summary's concentration
+		// score is one array lookup, not a per-prompt query (see
+		// getPromptsCitationDomainCounts's doc comment for why this is batched).
+		const domainCountsByPrompt = new Map<string, { domain: string; count: number }[]>();
+		for (const row of citationDomainCounts) {
+			const list = domainCountsByPrompt.get(row.prompt_id);
+			if (list) list.push({ domain: row.domain, count: row.count });
+			else domainCountsByPrompt.set(row.prompt_id, [{ domain: row.domain, count: row.count }]);
+		}
 
 		// Collect all user tags (system tags are added separately)
 		const allUserTags = new Set<string>();
@@ -175,6 +188,7 @@ export const getPromptsSummaryFn = createServerFn({ method: "GET" })
 			const totalRuns = stats ? Number(stats.total_runs) : 0;
 			const totalWeightedMentions = stats ? Number(stats.total_weighted_mentions) : 0;
 			const averageWeightedMentions = totalRuns > 0 ? totalWeightedMentions / totalRuns : 0;
+			const citationConcentration = computeCitationConcentration(domainCountsByPrompt.get(p.id) ?? []);
 
 			return {
 				id: p.id,
@@ -191,6 +205,7 @@ export const getPromptsSummaryFn = createServerFn({ method: "GET" })
 				lastRunAt: stats?.last_run_date ? new Date(stats.last_run_date) : null,
 				firstEvaluatedAt: firstEvalMap.get(p.id) ? new Date(firstEvalMap.get(p.id)!) : null,
 				tags: effectiveTags,
+				citationConcentration,
 			};
 		});
 

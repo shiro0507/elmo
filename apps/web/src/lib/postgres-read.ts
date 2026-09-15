@@ -8,10 +8,10 @@
 import { type SQL, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import {
-	UNAVAILABLE_SENTINEL,
 	type FanoutBreakdownRow,
 	type FanoutModelTotalRow,
 	type FanoutPromptTotalRow,
+	UNAVAILABLE_SENTINEL,
 } from "@/lib/fanout-analysis";
 
 const db = drizzle(process.env.DATABASE_URL!);
@@ -80,6 +80,12 @@ export interface CitationUrlStats {
 	count: number;
 	avg_position: number | null;
 	prompt_count: number;
+}
+
+export interface PromptCitationDomainCount {
+	prompt_id: string;
+	domain: string;
+	count: number;
 }
 
 export interface PromptMentionSummary {
@@ -476,6 +482,36 @@ export async function getPromptsSummary(
 			${promptIdFilter(enabledPromptIds)}
 		GROUP BY prompt_id
 		ORDER BY total_runs DESC
+	`);
+	return rows;
+}
+
+/**
+ * Citation domain counts grouped by prompt, for the whole brand in one query
+ * (avoids an N+1 of getPromptCitationUrlStats per prompt). Feeds the
+ * per-prompt "citation concentration" metric (unique domains / max-share /
+ * HHI) on the visibility page's prompt list — see
+ * apps/web/src/server/prompts.ts's getPromptsSummaryFn.
+ */
+export async function getPromptsCitationDomainCounts(
+	brandId: string,
+	fromDate: string | null,
+	toDate: string | null,
+	timezone: string,
+	enabledPromptIds?: string[],
+	model?: string,
+): Promise<PromptCitationDomainCount[]> {
+	const rows = await queryPg<PromptCitationDomainCount>(sql`
+		SELECT
+			prompt_id,
+			domain,
+			count(*)::int AS count
+		FROM citations
+		WHERE brand_id = ${brandId}
+			${dateFilter(fromDate, toDate, timezone)}
+			${modelFilter(model)}
+			${promptIdFilter(enabledPromptIds)}
+		GROUP BY prompt_id, domain
 	`);
 	return rows;
 }
