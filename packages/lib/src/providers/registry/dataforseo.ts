@@ -107,15 +107,17 @@ async function runGoogleAiMode(prompt: string): Promise<ScrapeResult> {
 		throw new Error(`DataForSEO API Error: ${task.status_message}`);
 	}
 
-	const citations = extractCitationsFromGoogle(response);
+	const raw = sanitizeForJson(response);
+	await resolveGoogleAiOverviewRedirects(raw);
+	const citations = extractCitationsFromGoogle(raw);
 	// Google AI Mode always searches, but DataForSEO doesn't expose the query
 	// strings anywhere in its response. Mark "unavailable" when citations
 	// prove a search, like the other providers; never echo the prompt (runs
 	// before this change did).
 	return {
-		rawOutput: sanitizeForJson(response),
+		rawOutput: raw,
 		webQueries: citations.length > 0 ? [WEB_QUERIES_UNAVAILABLE] : [],
-		textContent: extractTextFromGoogle(response),
+		textContent: extractTextFromGoogle(raw),
 		citations,
 		modelVersion: "dataforseo",
 	};
@@ -152,11 +154,13 @@ async function runGoogleAiOverview(prompt: string): Promise<ScrapeResult> {
 				if (hasAiOverview) {
 					// The SERP response carries the AI Overview as an items[].type
 					// "ai_overview" element, which the shared Google extractors understand.
-					const citations = extractCitationsFromGoogle(response);
+					const raw = sanitizeForJson(response);
+					await resolveGoogleAiOverviewRedirects(raw);
+					const citations = extractCitationsFromGoogle(raw);
 					return {
-						rawOutput: sanitizeForJson(response),
+						rawOutput: raw,
 						webQueries: citations.length > 0 ? [WEB_QUERIES_UNAVAILABLE] : [],
-						textContent: extractTextFromGoogle(response),
+						textContent: extractTextFromGoogle(raw),
 						citations,
 						modelVersion: "dataforseo",
 					};
@@ -188,6 +192,26 @@ async function runGoogleAiOverview(prompt: string): Promise<ScrapeResult> {
 }
 
 /**
+ * Follows a citation-link redirect just far enough to read where it points
+ * (a single manual hop, no destination page download), for any provider
+ * that wraps the real source behind an opaque token instead of returning it
+ * directly. Shared by Gemini's Vertex grounding redirects and Google's own
+ * AI Overview/AI Mode outbound-click redirects below. Resolution failures
+ * (timeout, non-redirect response, network error) fall back to the original
+ * wrapped URL rather than throwing — a citation with the wrong domain is
+ * better than losing the run over it.
+ */
+async function resolveRedirectLocation(url: string): Promise<string> {
+	try {
+		const res = await fetch(url, { method: "GET", redirect: "manual", signal: AbortSignal.timeout(8000) });
+		const location = res.headers.get("location");
+		return location?.startsWith("http") ? location : url;
+	} catch {
+		return url;
+	}
+}
+
+/**
  * Gemini (via DataForSEO) returns each citation `url` as a Google Vertex AI
  * "grounding-api-redirect" link; the real source only appears as a bare domain
  * in the annotation `title`. There is no DataForSEO setting or field that
@@ -199,16 +223,6 @@ async function runGoogleAiOverview(prompt: string): Promise<ScrapeResult> {
  * failures fall back to the original redirect URL.
  */
 const GROUNDING_REDIRECT_PREFIX = "https://vertexaisearch.cloud.google.com/grounding-api-redirect/";
-
-async function resolveGroundingRedirect(url: string): Promise<string> {
-	try {
-		const res = await fetch(url, { method: "GET", redirect: "manual", signal: AbortSignal.timeout(8000) });
-		const location = res.headers.get("location");
-		return location?.startsWith("http") ? location : url;
-	} catch {
-		return url;
-	}
-}
 
 async function resolveGroundingRedirects(raw: unknown): Promise<void> {
 	type RawAnnotation = { url?: string };
@@ -230,11 +244,49 @@ async function resolveGroundingRedirects(raw: unknown): Promise<void> {
 	const resolved = new Map<string, string>();
 	await Promise.all(
 		[...new Set(redirected.map((a) => a.url as string))].map(async (u) =>
-			resolved.set(u, await resolveGroundingRedirect(u)),
+			resolved.set(u, await resolveRedirectLocation(u)),
 		),
 	);
 	for (const ann of redirected) {
 		ann.url = resolved.get(ann.url as string) ?? ann.url;
+	}
+}
+
+/**
+ * Google itself has started wrapping AI Overview / AI Mode citation links in
+ * an outbound-click redirect (`google.<tld>/goto?url=<opaque token>`, and
+ * likely the older `/url?q=...` form too) instead of linking straight to the
+ * source — the same shape of problem as Gemini's Vertex redirects above, just
+ * on Google's native SERP endpoints rather than the LLM Responses API. The
+ * token isn't decodable from the URL itself, so this resolves each wrapped
+ * link the same way: one manual redirect hop, read the Location header.
+ */
+const GOOGLE_OUTBOUND_REDIRECT_RE = /^https?:\/\/(www\.)?google\.[a-z.]{2,24}\/(goto|url)(\?|$)/i;
+
+async function resolveGoogleAiOverviewRedirects(raw: unknown): Promise<void> {
+	type RawReference = { url?: string };
+	type RawGoogleResponse = {
+		tasks?: { result?: { items?: { type?: string; references?: RawReference[] }[] }[] }[];
+	};
+	const items = (raw as RawGoogleResponse)?.tasks?.[0]?.result?.[0]?.items ?? [];
+	const wrapped: RawReference[] = [];
+	for (const item of items) {
+		if (item?.type !== "ai_overview") continue;
+		for (const ref of item.references ?? []) {
+			if (typeof ref?.url === "string" && GOOGLE_OUTBOUND_REDIRECT_RE.test(ref.url)) {
+				wrapped.push(ref);
+			}
+		}
+	}
+	if (wrapped.length === 0) return;
+	const resolved = new Map<string, string>();
+	await Promise.all(
+		[...new Set(wrapped.map((r) => r.url as string))].map(async (u) =>
+			resolved.set(u, await resolveRedirectLocation(u)),
+		),
+	);
+	for (const ref of wrapped) {
+		ref.url = resolved.get(ref.url as string) ?? ref.url;
 	}
 }
 

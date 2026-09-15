@@ -231,4 +231,61 @@ describe("dataforseo provider", () => {
 		const rawUrl = raw.tasks[0].result[0].items[0].sections[0].annotations[0].url;
 		expect(rawUrl).toBe(realUrl);
 	});
+
+	it("resolves Google's own AI Overview outbound-click redirect citation URLs to the real source", async () => {
+		const realUrl = "https://www.whathifi.com/reviews/sonos-era-300";
+		const redirectUrl = "https://www.google.com/goto?url=aBc123opaqueToken";
+
+		dataforseoClient.googleOrganicLiveAdvanced.mockResolvedValueOnce({
+			tasks: [
+				{
+					status_code: 20000,
+					status_message: "Ok.",
+					result: [
+						{
+							items: [
+								{
+									type: "ai_overview",
+									markdown: "The Sonos Era 300 is a well-reviewed speaker released recently.",
+									references: [{ url: redirectUrl, title: "Sonos Era 300 review" }],
+								},
+							],
+						},
+					],
+				},
+			],
+		});
+
+		const fetchMock = vi.fn().mockResolvedValue({
+			headers: { get: (k: string) => (k === "location" ? realUrl : null) },
+		});
+		vi.stubGlobal("fetch", fetchMock);
+
+		const result = await dataforseo.run("google-ai-overview", "What is a well-reviewed speaker released last month?", {
+			webSearch: true,
+		});
+
+		expect(fetchMock).toHaveBeenCalledWith(redirectUrl, expect.objectContaining({ redirect: "manual" }));
+		expect(result.citations).toHaveLength(1);
+		expect(result.citations[0].url).toBe(realUrl);
+		expect(result.citations[0].domain).toBe("whathifi.com");
+		const raw = result.rawOutput as {
+			tasks: { result: { items: { references: { url: string }[] }[] }[] }[];
+		};
+		expect(raw.tasks[0].result[0].items[0].references[0].url).toBe(realUrl);
+	});
+
+	it("leaves ordinary (non-redirect) Google AI Overview citation URLs untouched", async () => {
+		dataforseoClient.googleOrganicLiveAdvanced.mockResolvedValueOnce(AI_OVERVIEW_OK);
+
+		const fetchMock = vi.fn();
+		vi.stubGlobal("fetch", fetchMock);
+
+		const result = await dataforseo.run("google-ai-overview", "What is a well-reviewed speaker released last month?", {
+			webSearch: true,
+		});
+
+		expect(fetchMock).not.toHaveBeenCalled();
+		expect(result.citations[0].url).toBe("https://www.whathifi.com/reviews/sonos-era-300");
+	});
 });
