@@ -135,7 +135,7 @@ describe("dataforseo provider", () => {
 		const [payload] = dataforseoClient.googleOrganicLiveAdvanced.mock.calls[0];
 		expect(payload[0]).toMatchObject({
 			keyword: "What is a well-reviewed speaker released last month?",
-			location_code: 2840,
+			location_code: 2360,
 			load_async_ai_overview: true,
 		});
 

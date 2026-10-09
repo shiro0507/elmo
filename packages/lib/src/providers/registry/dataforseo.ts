@@ -91,8 +91,8 @@ async function runGoogleAiMode(prompt: string): Promise<ScrapeResult> {
 	const api = createDfsSerpApi();
 	const requestInfo = new client.SerpGoogleAiModeLiveAdvancedRequestInfo({
 		keyword: prompt,
-		location_code: 2840,
-		language_code: "en",
+		location_code: 2360,
+		language_code: "id",
 		depth: 10,
 	});
 
@@ -128,8 +128,8 @@ async function runGoogleAiOverview(prompt: string): Promise<ScrapeResult> {
 	const api = createDfsSerpApi();
 	const requestInfo = new client.SerpGoogleOrganicLiveAdvancedRequestInfo({
 		keyword: prompt,
-		location_code: 2840,
-		language_code: "en",
+		location_code: 2360,
+		language_code: "id",
 		depth: 10,
 		// AI Overviews are generated on demand; without this DataForSEO only
 		// returns whatever it had cached, so most runs would come back empty.
