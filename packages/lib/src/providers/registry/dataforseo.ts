@@ -91,7 +91,7 @@ async function runGoogleAiMode(prompt: string): Promise<ScrapeResult> {
 	const api = createDfsSerpApi();
 	const requestInfo = new client.SerpGoogleAiModeLiveAdvancedRequestInfo({
 		keyword: prompt,
-		location_code: 2158,
+		location_code: 2344,
 		language_code: "zh-TW",
 		depth: 10,
 	});
@@ -128,7 +128,7 @@ async function runGoogleAiOverview(prompt: string): Promise<ScrapeResult> {
 	const api = createDfsSerpApi();
 	const requestInfo = new client.SerpGoogleOrganicLiveAdvancedRequestInfo({
 		keyword: prompt,
-		location_code: 2158,
+		location_code: 2344,
 		language_code: "zh-TW",
 		depth: 10,
 		// AI Overviews are generated on demand; without this DataForSEO only
