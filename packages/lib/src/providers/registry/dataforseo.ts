@@ -42,6 +42,7 @@ interface DataForSeoLlmRequest {
 	user_prompt: string;
 	model_name: string;
 	web_search: boolean;
+	web_search_country_iso_code?: string;
 }
 
 function sanitizeForJson(obj: unknown): unknown {
@@ -300,10 +301,11 @@ async function runLlmResponse(model: string, prompt: string, options?: ProviderO
 		user_prompt: prompt,
 		model_name: modelName,
 		web_search: webSearch,
+		// Pinned to Hong Kong to match the Google requests. Only Perplexity gets
+		// it: DataForSEO documents country localization for its Sonar models,
+		// while ChatGPT has model caveats and Gemini doesn't document it.
+		...(spec.call === "perplexity" ? { web_search_country_iso_code: "HK" } : {}),
 	};
-	// Do not expose country localization yet: DataForSEO's LLM Responses
-	// support differs by surface/model (ChatGPT has model caveats, Perplexity
-	// only documents it for Sonar models, and Gemini does not document it).
 
 	const response = await LLM_CALLS[spec.call](api, [body]);
 

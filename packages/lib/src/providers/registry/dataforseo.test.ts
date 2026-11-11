@@ -83,7 +83,7 @@ describe("dataforseo provider", () => {
 		expect(dataforseoClient.chatgptLlmResponsesLive).not.toHaveBeenCalled();
 	});
 
-	it("does not send country localization for DataForSEO LLM Responses targets", async () => {
+	it("does not send country localization for ChatGPT via DataForSEO", async () => {
 		dataforseoClient.chatgptLlmResponsesLive.mockResolvedValueOnce({
 			tasks: [
 				{
@@ -122,6 +122,37 @@ describe("dataforseo provider", () => {
 			user_prompt: "What is a well-reviewed laptop this month?",
 			model_name: "gpt-5.5",
 			web_search: true,
+		});
+	});
+
+	it("targets Hong Kong web search for Perplexity", async () => {
+		dataforseoClient.perplexityLlmResponsesLive.mockResolvedValueOnce({
+			tasks: [
+				{
+					status_code: 20000,
+					status_message: "Ok.",
+					result: [
+						{
+							model_name: "sonar",
+							items: [
+								{
+									type: "message",
+									sections: [{ type: "text", text: "Framework Laptop 13 is well reviewed.", annotations: [] }],
+								},
+							],
+						},
+					],
+				},
+			],
+		});
+
+		await dataforseo.run("perplexity", "What is a well-reviewed laptop this month?", { webSearch: true });
+
+		const [payload] = dataforseoClient.perplexityLlmResponsesLive.mock.calls[0];
+		expect(payload[0]).toMatchObject({
+			user_prompt: "What is a well-reviewed laptop this month?",
+			model_name: "sonar",
+			web_search_country_iso_code: "HK",
 		});
 	});
 
