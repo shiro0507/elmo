@@ -38,6 +38,16 @@ const AI_OVERVIEW_MODEL = "google-ai-overview";
 const SUPPORTED_MODELS = new Set([...SERP_MODELS, AI_OVERVIEW_MODEL, ...Object.keys(LLM_MODELS)]);
 const MAX_PROMPT_CHARS = 500;
 
+// Read per call so one codebase can be deployed once per market (e.g. HK, UK,
+// US), each instance with its own env. Defaults keep Hong Kong.
+function dfsLocale() {
+	return {
+		locationCode: Number(process.env.DATAFORSEO_LOCATION_CODE || 2344),
+		languageCode: process.env.DATAFORSEO_LANGUAGE_CODE || "zh-TW",
+		countryIsoCode: process.env.DATAFORSEO_COUNTRY_ISO_CODE || "HK",
+	};
+}
+
 interface DataForSeoLlmRequest {
 	user_prompt: string;
 	model_name: string;
@@ -92,8 +102,8 @@ async function runGoogleAiMode(prompt: string): Promise<ScrapeResult> {
 	const api = createDfsSerpApi();
 	const requestInfo = new client.SerpGoogleAiModeLiveAdvancedRequestInfo({
 		keyword: prompt,
-		location_code: 2344,
-		language_code: "zh-TW",
+		location_code: dfsLocale().locationCode,
+		language_code: dfsLocale().languageCode,
 		depth: 10,
 	});
 
@@ -129,8 +139,8 @@ async function runGoogleAiOverview(prompt: string): Promise<ScrapeResult> {
 	const api = createDfsSerpApi();
 	const requestInfo = new client.SerpGoogleOrganicLiveAdvancedRequestInfo({
 		keyword: prompt,
-		location_code: 2344,
-		language_code: "zh-TW",
+		location_code: dfsLocale().locationCode,
+		language_code: dfsLocale().languageCode,
 		depth: 10,
 		// AI Overviews are generated on demand; without this DataForSEO only
 		// returns whatever it had cached, so most runs would come back empty.
@@ -301,10 +311,10 @@ async function runLlmResponse(model: string, prompt: string, options?: ProviderO
 		user_prompt: prompt,
 		model_name: modelName,
 		web_search: webSearch,
-		// Pinned to Hong Kong to match the Google requests. Only Perplexity gets
-		// it: DataForSEO documents country localization for its Sonar models,
+		// Matches the Google requests' market. Only Perplexity gets it:
+		// DataForSEO documents country localization for its Sonar models,
 		// while ChatGPT has model caveats and Gemini doesn't document it.
-		...(spec.call === "perplexity" ? { web_search_country_iso_code: "HK" } : {}),
+		...(spec.call === "perplexity" ? { web_search_country_iso_code: dfsLocale().countryIsoCode } : {}),
 	};
 
 	const response = await LLM_CALLS[spec.call](api, [body]);

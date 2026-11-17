@@ -133,6 +133,25 @@ export const ENV_REGISTRY: EnvVarSpec[] = [
 		description: "DataForSEO account password.",
 	},
 	{
+		name: "DATAFORSEO_LOCATION_CODE",
+		scope: "server",
+		requiredBy: "optional",
+		description:
+			"DataForSEO location_code for Google AI Mode / AI Overview requests (e.g. 2344 Hong Kong, 2826 UK, 2840 US). Defaults to 2344.",
+	},
+	{
+		name: "DATAFORSEO_LANGUAGE_CODE",
+		scope: "server",
+		requiredBy: "optional",
+		description: "DataForSEO language_code for Google requests (e.g. zh-TW, en). Defaults to zh-TW.",
+	},
+	{
+		name: "DATAFORSEO_COUNTRY_ISO_CODE",
+		scope: "server",
+		requiredBy: "optional",
+		description: "Country for Perplexity web search via DataForSEO (e.g. HK, GB, US). Defaults to HK.",
+	},
+	{
 		name: "OPENAI_API_KEY",
 		scope: "server",
 		requiredBy: "dynamic-scrape-targets",

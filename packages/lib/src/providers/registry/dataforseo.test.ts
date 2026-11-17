@@ -50,6 +50,7 @@ import { dataforseo } from "./dataforseo";
 afterEach(() => {
 	vi.clearAllMocks();
 	vi.unstubAllGlobals();
+	vi.unstubAllEnvs();
 	vi.useRealTimers();
 });
 
@@ -174,6 +175,33 @@ describe("dataforseo provider", () => {
 		expect(result.citations).toHaveLength(1);
 		expect(result.citations[0].domain).toBe("whathifi.com");
 		expect(result.webQueries).toEqual(["unavailable"]);
+	});
+
+	it("targets the market configured via env for Google and Perplexity requests", async () => {
+		vi.stubEnv("DATAFORSEO_LOCATION_CODE", "2826");
+		vi.stubEnv("DATAFORSEO_LANGUAGE_CODE", "en");
+		vi.stubEnv("DATAFORSEO_COUNTRY_ISO_CODE", "GB");
+		dataforseoClient.googleOrganicLiveAdvanced.mockResolvedValueOnce(AI_OVERVIEW_OK);
+		dataforseoClient.perplexityLlmResponsesLive.mockResolvedValueOnce({
+			tasks: [
+				{
+					status_code: 20000,
+					status_message: "Ok.",
+					result: [{ model_name: "sonar", items: [{ type: "message", sections: [{ type: "text", text: "ok", annotations: [] }] }] }],
+				},
+			],
+		});
+
+		await dataforseo.run("google-ai-overview", "best speaker", { webSearch: true });
+		await dataforseo.run("perplexity", "best speaker", { webSearch: true });
+
+		expect(dataforseoClient.googleOrganicLiveAdvanced.mock.calls[0][0][0]).toMatchObject({
+			location_code: 2826,
+			language_code: "en",
+		});
+		expect(dataforseoClient.perplexityLlmResponsesLive.mock.calls[0][0][0]).toMatchObject({
+			web_search_country_iso_code: "GB",
+		});
 	});
 
 	it("retries the AI Overview request when DataForSEO returns a transient server error", async () => {
