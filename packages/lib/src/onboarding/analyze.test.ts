@@ -17,6 +17,7 @@ import { analyzeBrand } from "./analyze";
 
 afterEach(() => {
 	vi.clearAllMocks();
+	vi.unstubAllEnvs();
 });
 
 describe("analyzeBrand", () => {
@@ -127,5 +128,41 @@ describe("analyzeBrand", () => {
 		});
 		expect(result.competitors).toHaveLength(3);
 		expect(result.suggestedPrompts).toHaveLength(5);
+	});
+
+	it("asks for suggestions in the configured language and market", async () => {
+		vi.stubEnv("ONBOARDING_LANGUAGE", "English");
+		vi.stubEnv("DATAFORSEO_COUNTRY_ISO_CODE", "GB");
+		(runStructuredResearchPrompt as any).mockResolvedValueOnce({
+			brandName: "Acme",
+			additionalDomains: [],
+			aliases: [],
+			competitors: [],
+			suggestedPrompts: [],
+		});
+
+		await analyzeBrand({ website: "acme.co.uk" });
+
+		const prompt = (runStructuredResearchPrompt as any).mock.calls[0][0] as string;
+		expect(prompt).toContain("すべてEnglishで記述");
+		expect(prompt).toContain("対象市場はイギリスです");
+	});
+
+	it("keeps Japanese suggestions with no market note by default", async () => {
+		vi.stubEnv("ONBOARDING_LANGUAGE", "");
+		vi.stubEnv("DATAFORSEO_COUNTRY_ISO_CODE", "");
+		(runStructuredResearchPrompt as any).mockResolvedValueOnce({
+			brandName: "Acme",
+			additionalDomains: [],
+			aliases: [],
+			competitors: [],
+			suggestedPrompts: [],
+		});
+
+		await analyzeBrand({ website: "acme.com" });
+
+		const prompt = (runStructuredResearchPrompt as any).mock.calls[0][0] as string;
+		expect(prompt).toContain("すべて日本語で記述");
+		expect(prompt).not.toContain("対象市場");
 	});
 });

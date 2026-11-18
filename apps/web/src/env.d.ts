@@ -61,6 +61,7 @@ declare global {
 			readonly DATAFORSEO_LOCATION_CODE?: string;
 			readonly DATAFORSEO_LANGUAGE_CODE?: string;
 			readonly DATAFORSEO_COUNTRY_ISO_CODE?: string;
+			readonly ONBOARDING_LANGUAGE?: string;
 			readonly BETTER_AUTH_SECRET?: string;
 			readonly AUTH0_DOMAIN?: string;
 			readonly AUTH0_AUDIENCE?: string;

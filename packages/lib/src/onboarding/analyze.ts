@@ -214,6 +214,20 @@ async function safeGetExcerpt(website: string): Promise<string> {
 	}
 }
 
+// Each deployment tracks one market (see DATAFORSEO_COUNTRY_ISO_CODE), so the
+// suggested competitors and prompts should come from that market, not just be
+// written in its language. Only added when the market is set explicitly so
+// deployments relying on the default keep their existing suggestions.
+function marketNote(): string {
+	const code = process.env.DATAFORSEO_COUNTRY_ISO_CODE?.trim().toUpperCase();
+	if (!code) return "";
+	let market = code;
+	try {
+		market = new Intl.DisplayNames(["ja"], { type: "region" }).of(code) ?? code;
+	} catch {}
+	return `対象市場は${market}です。競合は${market}市場で実際に競合しているブランドを挙げ、提案するトラッキング用プロンプトは${market}のユーザーが実際にAIアシスタントに尋ねそうな質問にしてください。\n\n`;
+}
+
 function buildPrompt(args: {
 	website: string;
 	brandNameHint: string;
@@ -237,7 +251,7 @@ ${excerptBlock}
 
 構造化されたJSONオブジェクトを必ず返してください — このブランドについて何も見つけられなかった場合も同様です。その場合はbrandNameに上記の推測名を設定し、それ以外の全フィールドには空の配列を返してください。JSONの生成を拒否したり、分からないことを説明する文章で応答したりするのは誤った挙動です。情報が本当に手に入らない場合、ほとんどが空の配列であるオブジェクトを返すことが正しい対応です。
 
-出力するテキスト(ブランド名、エイリアス、競合名、提案するトラッキング用プロンプトなど)はすべて日本語で記述してください。ただしドメイン名やURLなど、本来英数字で表記されるべき固有の文字列はそのままにしてください。${skipNotes.length > 0 ? `\n\n${skipNotes.join(" ")}` : ""}`;
+${marketNote()}出力するテキスト(ブランド名、エイリアス、競合名、提案するトラッキング用プロンプトなど)はすべて${process.env.ONBOARDING_LANGUAGE || "日本語"}で記述してください。ただしドメイン名やURLなど、本来英数字で表記されるべき固有の文字列はそのままにしてください。${skipNotes.length > 0 ? `\n\n${skipNotes.join(" ")}` : ""}`;
 }
 
 function normalize(args: {

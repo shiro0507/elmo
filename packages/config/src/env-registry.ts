@@ -152,6 +152,13 @@ export const ENV_REGISTRY: EnvVarSpec[] = [
 		description: "Country for Perplexity web search via DataForSEO (e.g. HK, GB, US). Defaults to HK.",
 	},
 	{
+		name: "ONBOARDING_LANGUAGE",
+		scope: "server",
+		requiredBy: "optional",
+		description:
+			"Language the brand onboarding analysis writes its suggestions in (e.g. English). Defaults to 日本語.",
+	},
+	{
 		name: "OPENAI_API_KEY",
 		scope: "server",
 		requiredBy: "dynamic-scrape-targets",
